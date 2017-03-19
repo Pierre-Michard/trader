@@ -1,0 +1,1 @@
+$redis = Redis::Namespace.new("trader:#{Rails.env}", redis: Redis.new)

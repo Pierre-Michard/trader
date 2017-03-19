@@ -1,0 +1,17 @@
+<h2>Recently received messages</h2>
+
+<table>
+  <thead>
+  <tr>
+    <th>Title</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @messages.each do |message| %>
+      <tr>
+        <td><%= message %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
