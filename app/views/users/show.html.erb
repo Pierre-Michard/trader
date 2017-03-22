@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Paymium secret:</strong>
+  <%= @user.paymium_secret %>
+</p>
+
+<p>
+  <strong>Paymium token:</strong>
+  <%= @user.paymium_token %>
+</p>
+
+<p>
+  <strong>Kraken secret:</strong>
+  <%= @user.kraken_secret %>
+</p>
+
+<p>
+  <strong>Kraken token:</strong>
+  <%= @user.kraken_token %>
+</p>
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>

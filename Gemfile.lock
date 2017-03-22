@@ -1,3 +1,15 @@
+GIT
+  remote: https://github.com/sinatra/sinatra.git
+  revision: 3b4fc7dfe08f9bed5ad0f74f4febc144aabd2315
+  specs:
+    rack-protection (2.0.0.rc2)
+      rack
+    sinatra (2.0.0.rc2)
+      mustermann (= 1.0.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.0.rc2)
+      tilt (~> 2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -38,6 +50,8 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
     amq-protocol (2.1.0)
     arel (7.1.4)
     babel-source (5.8.35)
@@ -62,12 +76,21 @@ GEM
     erubis (2.7.0)
     execjs (2.7.0)
     ffi (1.9.18)
+    foreman (0.83.0)
+      thor (~> 0.19.1)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
+    hashie (3.5.5)
+    httparty (0.14.0)
+      multi_xml (>= 0.5.2)
     i18n (0.8.1)
     jbuilder (2.6.3)
       activesupport (>= 3.0.0, < 5.2)
       multi_json (~> 1.2)
+    kraken_ruby (0.5.0)
+      addressable
+      hashie
+      httparty
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -81,7 +104,10 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
+    mono_logger (1.1.0)
     multi_json (1.12.1)
+    multi_xml (0.6.0)
+    mustermann (1.0.0)
     nio4r (2.0.0)
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
@@ -90,6 +116,7 @@ GEM
       activesupport
       oj
     pg (0.20.0)
+    public_suffix (2.0.5)
     puma (3.8.2)
     rack (2.0.1)
     rack-test (0.6.3)
@@ -147,10 +174,17 @@ GEM
       redis-store (~> 1.2.0)
     redis-store (1.2.0)
       redis (>= 2.2)
-    rspec (3.5.0)
-      rspec-core (~> 3.5.0)
-      rspec-expectations (~> 3.5.0)
-      rspec-mocks (~> 3.5.0)
+    resque (1.27.2)
+      mono_logger (~> 1.0)
+      multi_json (~> 1.0)
+      redis-namespace (~> 1.3)
+      sinatra (>= 0.9.2)
+      vegas (~> 0.1.2)
+    resque-scheduler (4.3.0)
+      mono_logger (~> 1.0)
+      redis (~> 3.3)
+      resque (~> 1.26)
+      rufus-scheduler (~> 3.2)
     rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
@@ -159,7 +193,17 @@ GEM
     rspec-mocks (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
+    rspec-rails (3.5.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+      rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    rufus-scheduler (3.3.4)
+      tzinfo
     sass (3.4.23)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -198,6 +242,8 @@ GEM
       thread_safe (~> 0.1)
     uglifier (3.1.9)
       execjs (>= 0.3.0, < 3)
+    vegas (0.1.11)
+      rack (>= 1.0.0)
     web-console (3.4.0)
       actionview (>= 5.0)
       activemodel (>= 5.0)
@@ -214,7 +260,9 @@ DEPENDENCIES
   bunny
   byebug
   coffee-rails (~> 4.2)
+  foreman
   jbuilder (~> 2.5)
+  kraken_ruby
   listen (~> 3.0.5)
   paymium_api
   pg (~> 0.18)
@@ -223,8 +271,11 @@ DEPENDENCIES
   react-rails
   redis-namespace
   redis-rails
-  rspec
+  resque
+  resque-scheduler
+  rspec-rails
   sass-rails (~> 5.0)
+  sinatra!
   sneakers
   spring
   spring-watcher-listen (~> 2.0.0)
@@ -234,4 +285,4 @@ DEPENDENCIES
   web-console (>= 3.3.0)
 
 BUNDLED WITH
-   1.12.5
+   1.14.6

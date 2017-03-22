@@ -1,4 +1,4 @@
-Sneakers.configure  daemonize: true,
+Sneakers.configure  daemonize: false,
                     amqp: "amqp://localhost",
                     log: "log/sneakers.log",
                     pid_path: "tmp/pids/sneakers.pid",
