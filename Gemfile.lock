@@ -52,6 +52,8 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
+    addressabler (0.1.2)
+      addressable (>= 2.3)
     amq-protocol (2.1.0)
     arel (7.1.4)
     babel-source (5.8.35)
@@ -87,8 +89,9 @@ GEM
     jbuilder (2.6.3)
       activesupport (>= 3.0.0, < 5.2)
       multi_json (~> 1.2)
-    kraken_ruby (0.5.0)
-      addressable
+    kraken_client (1.1.5)
+      activesupport (>= 3.2)
+      addressabler
       hashie
       httparty
     listen (3.0.8)
@@ -262,7 +265,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   foreman
   jbuilder (~> 2.5)
-  kraken_ruby
+  kraken_client
   listen (~> 3.0.5)
   paymium_api
   pg (~> 0.18)
