@@ -1,4 +1,4 @@
 UpdateTicker:
   every:
-    - "5s"
+    - "60s"
     - :first_in: '5s'
