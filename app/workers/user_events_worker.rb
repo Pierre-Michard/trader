@@ -6,10 +6,21 @@ class EventsWorker
     if raw_event == 'ready'
       PaymiumService.instance.broadcast_channel_id
     else
-      event_params = JSON.parse(raw_event)
-      worker_trace("working on it!")
-      worker_trace(raw_event)
       RecentPaymiumUserMessages.push(raw_event)
+      event = JSON.parse(raw_event).with_indifferent_access
+      orders = event[:orders]
+
+      unless orders.blank?
+        PaymiumService.instance.extract_trades(from_orders:orders).each do |trade|
+          if trade[:created_at] > 10.minutes.ago
+            Sneakers::logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
+            Trade.find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
+              t.btc_amount= trade[:amount]
+            end
+          end
+        end
+      end
+      #Trader.monitor_trades
     end
     ack!
   end

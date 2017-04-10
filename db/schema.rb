@@ -10,18 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170322180327) do
+ActiveRecord::Schema.define(version: 20170410173049) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "users", force: :cascade do |t|
-    t.string   "paymium_secret"
-    t.string   "paymium_token"
-    t.string   "kraken_secret"
-    t.string   "kraken_token"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+  create_table "trades", force: :cascade do |t|
+    t.string   "paymium_uuid"
+    t.string   "kraken_uuid"
+    t.float    "btc_amount"
+    t.float    "eur_amount"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["paymium_uuid"], name: "index_trades_on_paymium_uuid", unique: true, using: :btree
   end
 
 end

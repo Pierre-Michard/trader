@@ -24,5 +24,28 @@ class Kraken
     client.private.balance
   end
 
+  def balance_eur
+    balance.try(:ZEUR).to_f || 0
+  end
+
+  def balance_btc
+    balance.try(:XXBT).to_f || 0
+  end
+
+
+  def cancel_order(order)
+    client.delete("user/orders/#{order['uuid']}/cancel")
+  end
+
+  def place_market_order(direction:, btc_amount:)
+    res = client.private.add_order({
+       pair: 'XXBTZEUR',
+       type: direction.to_s,
+       ordertype: 'market',
+       volume: btc_amount
+    })
+
+    res.txid[0]
+  end
 
 end

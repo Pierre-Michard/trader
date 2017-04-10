@@ -17,4 +17,33 @@ describe Kraken do
     end
   end
 
+  describe 'balance_eur' do
+    it 'responds correctly' do
+      res = subject.balance_eur
+      expect(res).to be_a Numeric
+    end
+  end
+
+  describe 'balance_btc' do
+    it 'responds correctly' do
+      res = subject.balance_btc
+      expect(res).to be_a Numeric
+    end
+  end
+
+  describe 'place a market order' do
+    it 'places an order' do
+      res = subject.place_market_order(direction: :buy, btc_amount: 0.0005)
+      expect(res).to be_a Hash
+      p res[0]
+    end
+
+    it 'places an order' do
+      res = subject.place_market_order(direction: :sell, btc_amount: 0.0005)
+      expect(res).to be_a Hash
+      p res
+    end
+
+  end
+
 end

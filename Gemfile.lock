@@ -1,4 +1,12 @@
 GIT
+  remote: https://github.com/Pierre-Michard/paymium_api.git
+  revision: bcbc2f5a1dbe60f2720eb7fe9355a35e9e9f7c4e
+  specs:
+    paymium_api (0.0.7)
+      activesupport
+      oj
+
+GIT
   remote: https://github.com/sinatra/sinatra.git
   revision: 3b4fc7dfe08f9bed5ad0f74f4febc144aabd2315
   specs:
@@ -114,10 +122,7 @@ GEM
     nio4r (2.0.0)
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
-    oj (2.18.3)
-    paymium_api (0.0.7)
-      activesupport
-      oj
+    oj (2.18.5)
     pg (0.20.0)
     public_suffix (2.0.5)
     puma (3.8.2)
@@ -183,11 +188,6 @@ GEM
       redis-namespace (~> 1.3)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
-    resque-scheduler (4.3.0)
-      mono_logger (~> 1.0)
-      redis (~> 3.3)
-      resque (~> 1.26)
-      rufus-scheduler (~> 3.2)
     rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
@@ -267,7 +267,7 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   kraken_client
   listen (~> 3.0.5)
-  paymium_api
+  paymium_api!
   pg (~> 0.18)
   puma (~> 3.0)
   rails (~> 5.0.2)
@@ -275,8 +275,8 @@ DEPENDENCIES
   redis-namespace
   redis-rails
   resque
-  resque-scheduler
   rspec-rails
+  rufus-scheduler
   sass-rails (~> 5.0)
   sinatra!
   sneakers

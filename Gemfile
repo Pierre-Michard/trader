@@ -36,12 +36,14 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 gem 'bunny'
 gem 'sneakers'
-gem 'paymium_api'
+gem 'paymium_api', github: 'Pierre-Michard/paymium_api'
 gem 'redis-rails'
 gem 'redis-namespace'
 gem 'foreman'
 gem 'resque'
-gem 'resque-scheduler'
+gem 'rufus-scheduler'
+#gem 'resque-scheduler'
+#gem 'active_scheduler'
 gem 'kraken_client'
 
 

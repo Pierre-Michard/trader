@@ -1,7 +1,7 @@
 var io = require('socket.io-client');
 var amqp = require('amqplib/callback_api');
 
-var socket = io.connect('sandbox.paymium.com/user', {
+var socket = io.connect('paymium.com/user', {
   path: '/ws/socket.io'
 });
 
@@ -36,7 +36,7 @@ function rabbitListen(){
 
             ch.consume(input, function(msg) {
                 if (msg !== null) {
-                    console.log(msg.content.toString());
+                    //console.log(msg.content.toString());
                     channel = msg.content.toString();
                     socket.emit('channel', channel);
                     ch.ack(msg);
@@ -63,8 +63,8 @@ if(channel !== '')
   socket.emit('channel', channel);
 
 socket.on('stream', function(data) {
-  console.log('GOT DATA:');
-  console.log(data);
+  //console.log('GOT DATA:');
+  //console.log(data);
   rabbitBroadcast(JSON.stringify(data))
 });
 
