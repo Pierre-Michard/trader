@@ -1,7 +1,6 @@
 class Robot
-  include Singleton
 
-  TARGET_BUY_MARGE= 0.0034
+  TARGET_BUY_MARGE= 0.005
   TARGET_SELL_MARGE= 0.005
   MARGE_TOLERANCE= 0.0005
   MIN_TRADE_AMOUNT= 0.001
@@ -14,39 +13,52 @@ class Robot
   end
 
   def paymium_btc_balance
-    PaymiumService.instance.balance_btc
+    @paymium_btc_balance ||= PaymiumService.instance.balance_btc
   end
 
   def paymium_eur_balance
-    PaymiumService.instance.balance_eur
+    @paymium_eur_balance ||= PaymiumService.instance.balance_eur
   end
 
   def kraken_eur_balance
-    Kraken.instance.balance_eur
+    @kraken_eur_balance ||=Kraken.instance.balance_eur
   end
 
   def kraken_btc_balance
-    Kraken.instance.balance_btc
+    @kraken_btc_balance ||= Kraken.instance.balance_btc
   end
 
   def sell_amount
-    [paymium_btc_balance, (kraken_eur_balance/target_sell_price), MAX_TRADE_AMOUNT].min * 0.9
+    @sell_amount ||= [paymium_btc_balance, (kraken_eur_balance/target_sell_price), MAX_TRADE_AMOUNT].min * 0.9
   end
 
   def buy_amount
-    [paymium_eur_balance/target_buy_price, (kraken_btc_balance), MAX_TRADE_AMOUNT].min * 0.9
+    @buy_amount ||= [paymium_eur_balance/target_buy_price, (kraken_btc_balance), MAX_TRADE_AMOUNT].min * 0.9
   end
 
   def target_sell_price
-    @target_sell_price = current_price *  (1 + @target_sell_marge)
+    @target_sell_price ||= current_price *  (1 + @target_sell_marge)
   end
 
   def target_buy_price
-    @target_buy_price = current_price *  (1 - @target_buy_marge)
+    @target_buy_price ||= current_price *  (1 - @target_buy_marge)
   end
 
   def current_price
-    Kraken.instance.current_price
+    @current_price ||= Kraken.instance.current_price
+  end
+
+  def keep_only_last_order(orders)
+    if orders.size > 1
+      orders[1..-1].each do |order|
+        PaymiumService.instance.cancel_order(order)
+      end
+    end
+  end
+
+  def cleanup_orders
+    keep_only_last_order(PaymiumService.instance.current_sell_orders)
+    keep_only_last_order(PaymiumService.instance.current_buy_orders)
   end
 
   def monitor_sell_price

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Robot do
-  subject{Robot.instance}
+  subject{Robot.new}
 
   describe 'sell_amount' do
     it 'responds successfully' do
