@@ -1,8 +1,8 @@
 class Robot
 
-  TARGET_BUY_MARGE= 0.005
-  TARGET_SELL_MARGE= 0.005
-  MARGE_TOLERANCE= 0.0005
+  TARGET_BUY_MARGE= 0.0027
+  TARGET_SELL_MARGE= 0.01
+  MARGE_TOLERANCE= 0.0001
   MIN_TRADE_AMOUNT= 0.001
   MAX_TRADE_AMOUNT= 0.1
 
@@ -37,11 +37,13 @@ class Robot
   end
 
   def target_sell_price
-    @target_sell_price ||= current_price *  (1 + @target_sell_marge)
+    asks_price = KrakenSdepthService.asks_price(MAX_TRADE_AMOUNT)
+    @target_sell_price ||= asks_price *  (1 + @target_sell_marge)
   end
 
   def target_buy_price
-    @target_buy_price ||= current_price *  (1 - @target_buy_marge)
+    bids_price = KrakenSdepthService.bids_price(MAX_TRADE_AMOUNT)
+    @target_buy_price ||= bids_price *  (1 - @target_buy_marge)
   end
 
   def current_price
@@ -56,9 +58,17 @@ class Robot
     end
   end
 
+  def current_sell_orders
+    @current_sell_orders ||= PaymiumService.instance.current_sell_orders
+  end
+
+  def current_buy_orders
+    @current_buy_orders ||= PaymiumService.instance.current_buy_orders
+  end
+
   def cleanup_orders
-    keep_only_last_order(PaymiumService.instance.current_sell_orders)
-    keep_only_last_order(PaymiumService.instance.current_buy_orders)
+    keep_only_last_order(current_sell_orders)
+    keep_only_last_order(current_buy_orders)
   end
 
   def monitor_sell_price
@@ -67,7 +77,7 @@ class Robot
     max_sell_price = @target_sell_price * (1 + @marge_tolerance)
 
     p "target sell price #{@target_sell_price} [#{min_sell_price}-#{max_sell_price}]"
-    current_sell_order = PaymiumService.instance.current_sell_orders.last
+    current_sell_order = current_sell_orders.last
     unless current_sell_order &&
         current_sell_order['price'] > min_sell_price &&
         current_sell_order['price'] < max_sell_price
@@ -90,7 +100,7 @@ class Robot
     max_buy_price = @target_buy_price * (1 + @marge_tolerance)
 
     p "target buy price #{@target_buy_price} [#{min_buy_price}-#{max_buy_price}]"
-    current_buy_order = PaymiumService.instance.current_buy_orders.last
+    current_buy_order = current_buy_orders.last
     unless current_buy_order &&
         current_buy_order['price'] > min_buy_price &&
         current_buy_order['price'] < max_buy_price

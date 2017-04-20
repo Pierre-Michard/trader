@@ -7,5 +7,10 @@ class Trade < ApplicationRecord
     self.kraken_uuid = Kraken.instance.place_market_order(
         direction:  (btc_amount > 0)? :sell : :buy,
         btc_amount: btc_amount.abs)
+    self.save!
+  end
+
+  def get_kraken_order
+    Kraken.instance.client.private.query_orders(txid: kraken_uuid, trades: true)
   end
 end

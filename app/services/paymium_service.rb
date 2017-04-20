@@ -92,7 +92,10 @@ class PaymiumService
   end
 
   def cancel_all_orders
-    current_orders.each{|o| cancel_order(o)}
+    current_orders.each do |o|
+      p "cancel order #{o}"
+      cancel_order(o)
+    end
   end
 
   def place_limit_order(direction:, btc_amount:, price:)

@@ -5,12 +5,13 @@
   "main": "ws.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ws.js"
+    "start": "node paymium_private.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.5.1",
+    "reconnecting-websocket": "^3.0.3",
     "socket.io-client": "^1.7.3",
     "ws": "^2.2.3"
   }

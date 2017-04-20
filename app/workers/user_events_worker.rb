@@ -1,8 +1,9 @@
-class EventsWorker
+class UserEventsWorker
   include Sneakers::Worker
   from_queue 'paymium_events', env: nil
 
   def work(raw_event)
+    Sneakers::logger.info "recevied raw_event #{raw_event}"
     if raw_event == 'ready'
       PaymiumService.instance.broadcast_channel_id
     else
