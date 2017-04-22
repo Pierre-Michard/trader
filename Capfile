@@ -41,9 +41,9 @@ Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }
 # Default settings
 set :foreman_use_sudo, false # Set to :rbenv for rbenv sudo, :rvm for rvmsudo or true for normal sudo
 set :foreman_roles, :all
-set :foreman_template, 'upstart'
+set :foreman_template, 'supervisord'
 set :foreman_export_path, ->{ File.join(Dir.home, '.init') }
 set :foreman_options, ->{ {
-    app: application,
+    app: 'trader',
     log: File.join(shared_path, 'log')
 } }
