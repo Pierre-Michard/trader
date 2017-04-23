@@ -35,7 +35,8 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 gem 'capistrano-rvm', group: :development
 gem 'capistrano-rails', group: :development
-gem 'capistrano-foreman', group: :development
+#gem 'capistrano-foreman', group: :development
+gem 'capistrano-foreman-systemd', group: :development
 
 gem 'bunny'
 gem 'sneakers'
