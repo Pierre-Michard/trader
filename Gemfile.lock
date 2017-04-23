@@ -1,4 +1,11 @@
 GIT
+  remote: git@github.com:ddollar/foreman.git
+  revision: d80b759bd59099f98a495231030c698e47105b03
+  specs:
+    foreman (0.84.0)
+      thor (~> 0.19.1)
+
+GIT
   remote: https://github.com/Pierre-Michard/paymium_api.git
   revision: bcbc2f5a1dbe60f2720eb7fe9355a35e9e9f7c4e
   specs:
@@ -105,8 +112,6 @@ GEM
     erubis (2.7.0)
     execjs (2.7.0)
     ffi (1.9.18)
-    foreman (0.83.0)
-      thor (~> 0.19.1)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     hashie (3.5.5)
@@ -291,7 +296,7 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rvm
   coffee-rails (~> 4.2)
-  foreman
+  foreman!
   jbuilder (~> 2.5)
   kraken_client
   listen (~> 3.0.5)
