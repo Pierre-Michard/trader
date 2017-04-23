@@ -33,3 +33,9 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/syst
 # set :keep_releases, 5
 set :user, "trader"
 
+set :foreman_template, 'systemd'
+set :foreman_export_path, ->{ File.join(shared_path, 'systemd') }
+set :foreman_options, ->{ {
+    app: 'trader',
+    log: File.join(shared_path, 'log')
+} }
