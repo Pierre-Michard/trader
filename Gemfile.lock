@@ -81,7 +81,7 @@ GEM
     bunny (2.6.4)
       amq-protocol (>= 2.0.1)
     byebug (9.0.6)
-    capistrano (3.8.0)
+    capistrano (3.8.1)
       airbrussh (>= 1.0.0)
       i18n
       rake (>= 10.0.0)

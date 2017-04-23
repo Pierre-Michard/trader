@@ -1,5 +1,5 @@
 # config valid only for current version of Capistrano
-lock "3.8.0"
+lock "3.8.1"
 
 set :application, "trader"
 set :repo_url, "git@github.com:Pierre-Michard/trader.git"
@@ -33,6 +33,59 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/syst
 # set :keep_releases, 5
 set :user, "trader"
 
-set :foreman_systemd_export_path, ->{ File.join(shared_path, 'systemd') }
-set :foreman_systemd_app, 'trader'
-set :foreman_systemd_user, 'trader'
+set :foreman_template, 'systemd'
+set :foreman_export_path, ->{ File.join(shared_path, 'systemd') }
+set :foreman_options, ->{ {
+    app: 'trader',
+    log: File.join(shared_path, 'log')
+} }
+
+
+
+namespace :app do
+  desc "Start web server"
+  task :start do
+    on roles(:web) do |host|
+      within release_path do
+        execute :sudo, :systemctl, :start, "app-web@5000.service"
+        execute :sudo, :systemctl, :start, "app-worker@5001.service"
+        execute :sudo, :systemctl, :start, "app-clock@5002.service"
+      end
+    end
+  end
+
+  desc "Stop web server"
+  task :stop do
+    on roles(:web) do |host|
+      within release_path do
+        execute :sudo, :systemctl, :stop, "app-web@5000.service"
+        execute :sudo, :systemctl, :stop, "app-worker@5001.service"
+        execute :sudo, :systemctl, :stop, "app-clock@5002.service"
+      end
+    end
+  end
+
+  desc "Restart web server"
+  task :restart do
+    on roles(:web) do |host|
+      within release_path do
+        execute :sudo, :systemctl, :restart, "app-web@5000.service"
+        execute :sudo, :systemctl, :restart, "app-worker@5001.service"
+        execute :sudo, :systemctl, :restart, "app-clock@5002.service"
+      end
+    end
+  end
+
+  desc "Reload systemd"
+  task :systemd do
+    on roles(:web) do
+      within release_path do
+        execute :sudo, :foreman, :export, :systemd, "/etc/systemd/system", "--user deploy"
+        execute :sudo, :systemctl, "daemon-reload"
+      end
+    end
+  end
+end
+
+after 'deploy:publishing', 'app:systemd'
+after 'app:systemd', 'app:restart'

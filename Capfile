@@ -34,10 +34,8 @@ require "capistrano/rvm"
 require 'capistrano/rails'
 #require "capistrano/rails/migrations"
 # require "capistrano/passenger"
-#require 'capistrano/foreman'
-require 'capistrano/foreman_systemd'
+require 'capistrano/foreman'
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
 Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }
 
-after 'deploy:symlink:release', 'foreman_systemd:export'
