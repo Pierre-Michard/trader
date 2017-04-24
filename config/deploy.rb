@@ -41,15 +41,17 @@ set :foreman_options, ->{ {
 } }
 
 
+SERVICES = %w{trader-web@15000.service trader-paymium_private_node@15100.service trader-kraken_public_node@15200.service trader-jobs@15300.service trader-resque@15400.service}
 
 namespace :app do
   desc "Start web server"
   task :start do
     on roles(:web) do |host|
       within release_path do
-        execute :sudo, :systemctl, :start, "app-web@5000.service"
-        execute :sudo, :systemctl, :start, "app-worker@5001.service"
-        execute :sudo, :systemctl, :start, "app-clock@5002.service"
+        execute :sudo, :systemctl, "daemon-reload"
+        SERVICES.each do |service|
+          execute :sudo, :systemctl, :start, service
+        end
       end
     end
   end
@@ -58,9 +60,9 @@ namespace :app do
   task :stop do
     on roles(:web) do |host|
       within release_path do
-        execute :sudo, :systemctl, :stop, "app-web@5000.service"
-        execute :sudo, :systemctl, :stop, "app-worker@5001.service"
-        execute :sudo, :systemctl, :stop, "app-clock@5002.service"
+        SERVICES.each do |service|
+          execute :sudo, :systemctl, :stop, service
+        end
       end
     end
   end
@@ -69,9 +71,10 @@ namespace :app do
   task :restart do
     on roles(:web) do |host|
       within release_path do
-        execute :sudo, :systemctl, :restart, "app-web@5000.service"
-        execute :sudo, :systemctl, :restart, "app-worker@5001.service"
-        execute :sudo, :systemctl, :restart, "app-clock@5002.service"
+        execute :sudo, :systemctl, "daemon-reload"
+        SERVICES.each do |service|
+          execute :sudo, :systemctl, :restart, service
+        end
       end
     end
   end
@@ -80,12 +83,11 @@ namespace :app do
   task :systemd do
     on roles(:web) do
       within release_path do
-        execute :sudo, :foreman, :export, :systemd, "/etc/systemd/system", "--user deploy"
-        execute :sudo, :systemctl, "daemon-reload"
+
       end
     end
   end
 end
 
-after 'deploy:publishing', 'app:systemd'
-after 'app:systemd', 'app:restart'
+after 'deploy:publishing', 'foreman:export'
+after 'foreman:export', 'app:restart'
