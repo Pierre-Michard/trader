@@ -33,13 +33,16 @@ gem 'jbuilder', '~> 2.5'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+gem 'capistrano-rvm', group: :development
+gem 'capistrano-rails', group: :development
+gem 'capistrano-foreman', group: :development
+
 gem 'bunny'
 gem 'sneakers'
 gem 'paymium_api', github: 'Pierre-Michard/paymium_api'
 gem 'redis-rails'
 gem 'redis-namespace'
-gem 'foreman'
+gem 'foreman', git: 'git@github.com:ddollar/foreman.git'
 gem 'resque'
 gem 'rufus-scheduler'
 #gem 'resque-scheduler'
