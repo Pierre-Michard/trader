@@ -4,7 +4,7 @@ class Robot
   TARGET_SELL_MARGE= 0.0050
   MARGE_TOLERANCE= 0.0001
   MIN_TRADE_AMOUNT= 0.001
-  MAX_TRADE_AMOUNT= 0.1
+  MAX_TRADE_AMOUNT= 0.5
 
   def initialize
     @target_buy_marge = TARGET_BUY_MARGE
