@@ -1,9 +1,16 @@
 class KrakenSdepthService
   KEY = 'kraken_sdepth' # redis key
 
+  class OutdatedData < Exception
+
+  end
+
   def self.get
     sdepth = JSON.parse($redis.get(KEY)).with_indifferent_access
     sdepth[:now] = Time.at(sdepth[:now])
+    unless sdepth[:now] > 10.minutes.ago
+      raise OutdatedData.new 'no recent sdepth available'
+    end
     sdepth
   end
 

@@ -57,16 +57,20 @@ class PaymiumService
 
   def extract_trades(from_orders:)
     from_orders.
-        map{|o| o['account_operations']}.
+        map{|o| o['account_operations'].map{|ao| ao.merge({'order' => o})}}.
         flatten.
-        select{|ao| ['btc_purchase','btc_sale'].include?(ao['name']) && ao['currency'] == 'BTC'}.
-        map do |ao|
+        each_cons(2).
+        select{|prev, ao| ['btc_purchase','btc_sale'].include?(ao['name']) && ao['currency'] == 'BTC'}.
+        map do |prev, ao|
       {
           created_at:Time.parse(ao['created_at']),
+          created_at_int: ao['created_at_int'],
           uuid:ao['uuid'],
           amount:ao['amount'],
           direction: ao['name'] == 'btc_purchase'? :buy : :sell,
-          currency: 'BTC'
+          currency: 'BTC',
+          order: ao['order'],
+          counterpart: prev
       }
     end
   end
