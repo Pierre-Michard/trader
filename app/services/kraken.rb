@@ -21,7 +21,9 @@ class Kraken
   end
 
   def balance
-    client.private.balance
+    Rails.cache.fetch(:kraken_balance, expires_in: 5.seconds) do
+      client.private.balance
+    end
   end
 
   def balance_eur
@@ -34,6 +36,7 @@ class Kraken
 
 
   def cancel_order(order)
+    Rails.cache.delete(:kraken_balance)
     client.delete("user/orders/#{order['uuid']}/cancel")
   end
 
@@ -44,7 +47,7 @@ class Kraken
        ordertype: 'market',
        volume: btc_amount
     })
-
+    Rails.cache.delete(:kraken_balance)
     res.txid[0]
   end
 

@@ -7,7 +7,6 @@ class UserEventsWorker
     if raw_event == 'ready'
       PaymiumService.instance.broadcast_channel_id
     else
-      RecentPaymiumUserMessages.push(raw_event)
       event = JSON.parse(raw_event).with_indifferent_access
       orders = event[:orders]
 
@@ -21,7 +20,7 @@ class UserEventsWorker
           end
         end
       end
-      #Trader.monitor_trades
+      PaymiumService.instance.update_user(event)
     end
     ack!
   end

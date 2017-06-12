@@ -8,11 +8,11 @@ class KrakenPublicWorker
     when 'trades'
       event[:trades].each do |trade|
         KrakenTradesService.push(trade.to_json)
-        Sneakers::logger.info "received trade #{KrakenTradesService.list.last}"
+        #Sneakers::logger.info "received trade #{KrakenTradesService.list.last}"
       end
     when 'sdepth'
       KrakenSdepthService.set(event[:sdepth].to_json)
-      Sneakers::logger.info "#{event[:sdepth][:now]}: received sdepth #{KrakenSdepthService.get}"
+      #Sneakers::logger.info "#{event[:sdepth][:now]}: received sdepth #{KrakenSdepthService.get}"
 
     else
       Sneakers::logger.warn "unknown event type #{event[:type]}"

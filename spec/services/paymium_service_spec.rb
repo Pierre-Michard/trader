@@ -3,13 +3,6 @@ require 'rails_helper'
 describe PaymiumService do
   subject{PaymiumService.instance}
 
-  describe '#current_price' do
-    it 'responds correctly' do
-      res = subject.user
-      expect(res).to be_a Hash
-    end
-  end
-
   describe '#broadcast_channel_id' do
     it 'does not throw exceptions' do
       res = subject.broadcast_channel_id
@@ -68,6 +61,29 @@ describe PaymiumService do
       res = subject.latest_sell_trades
       expect(res).to be_an Array
       p res
+    end
+  end
+
+  describe '#sdepth' do
+    it 'retrieves order book' do
+      res = subject.sdepth
+      expect(res).to be_a Hash
+      expect(res).to have_key(:bids)
+      expect(res).to have_key(:asks)
+      p res[:bids].size
+      p res[:bids].reverse.first
+      p res[:asks].size
+      p res[:asks].first
+    end
+  end
+
+  describe '#asks' do
+    it 'retrieves asks' do
+      res = subject.asks
+      p res
+      expect(res).to be_an Array
+      expect(res[0]).to have_key :price
+      expect(res[0]).to have_key :amount
     end
   end
 end

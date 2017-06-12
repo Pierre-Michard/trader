@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
   def index
-    @messages = RecentPaymiumUserMessages.list
+    @messages = []
   end
 end

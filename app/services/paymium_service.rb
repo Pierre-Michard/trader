@@ -28,7 +28,16 @@ class PaymiumService
   end
 
   def user
-    client.get('/user')
+    Rails.cache.fetch(:paymium_user, expires_in: 5.seconds) do
+      client.get('/user').with_indifferent_access
+    end
+  end
+
+  def update_user(user)
+    cached = Rails.cache.read(:paymium_user)
+    if cached
+      Rails.cache.write(:paymium_user, cached.merge(user),expires_in: 5.seconds)
+    end
   end
 
   def balance_eur
@@ -92,6 +101,7 @@ class PaymiumService
   end
 
   def cancel_order(order)
+    Rails.cache.delete(:paymium_user)
     client.delete("user/orders/#{order['uuid']}/cancel")
   end
 
@@ -103,6 +113,7 @@ class PaymiumService
   end
 
   def place_limit_order(direction:, btc_amount:, price:)
+    Rails.cache.delete(:paymium_user)
     client.post('user/orders', {
         type: 'LimitOrder',
         currency: 'EUR',
@@ -112,4 +123,53 @@ class PaymiumService
     })
   end
 
+  def sdepth
+    Rails.cache.fetch(:paymium_sdepth, expires_in: 60.seconds) do
+      res = client.get('data/eur/depth').with_indifferent_access
+      res[:bids] = res[:bids].reverse
+      res
+    end
+  end
+
+  def update_asks(asks)
+    new_sdepth = sdepth
+    asks.each do |ask|
+      existing = new_sdepth[:asks].detect{ |el| el[:price] == ask[:price] }
+      if ask[:amount] == 0
+        new_sdepth[:asks].delete(existing) unless existing.nil?
+      elsif existing.nil?
+        (new_sdepth[:asks] << ask).sort_by! { |a| a[:price]}
+      else
+        existing[:amount] = ask[:amount]
+      end
+    end
+    update_sdepth(new_sdepth)
+  end
+
+  def update_bids(bids)
+    new_sdepth = sdepth
+    bids.each do |bid|
+      existing = new_sdepth[:bids].detect{ |el| el[:price] == bid[:price] }
+      if bid[:amount] == 0
+        new_sdepth[:bids].delete(existing) unless existing.nil?
+      elsif existing.nil?
+        (new_sdepth[:bids] << bid).sort_by! { |a| -a[:price]}
+      else
+        existing[:amount] = bid[:amount]
+      end
+    end
+    update_sdepth(new_sdepth)
+  end
+
+  def update_sdepth(new_sdepth)
+    Rails.cache.write(:paymium_sdepth, new_sdepth, expires_in: 60.seconds)
+  end
+
+  def bids
+    sdepth[:bids]
+  end
+
+  def asks
+    sdepth[:asks]
+  end
 end
