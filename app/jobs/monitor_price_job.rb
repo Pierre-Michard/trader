@@ -1,5 +1,5 @@
-class UpdateTickerJob < ApplicationJob
-  @queue='update_ticker'
+class MonitorPriceJob < ApplicationJob
+  @queue='monitor_price'
   def perform
     robot = Robot.new
     begin
@@ -8,7 +8,6 @@ class UpdateTickerJob < ApplicationJob
     rescue KrakenSdepthService::OutdatedData
       PaymiumService.instance.cancel_all_orders
     end
-    robot.monitor_trades
     robot.cleanup_orders
   end
 end
