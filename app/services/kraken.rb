@@ -21,7 +21,7 @@ class Kraken
   end
 
   def balance
-    Rails.cache.fetch(:kraken_balance, expires_in: 5.seconds) do
+    Rails.cache.fetch(:kraken_balance, expires_in: 120.seconds) do
       client.private.balance
     end
   end
