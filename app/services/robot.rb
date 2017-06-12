@@ -88,7 +88,7 @@ class Robot
       amount = send("#{direction}_amount")
       if amount > MIN_TRADE_AMOUNT
         logger.info "place Paymium buy order amount: #{amount}, price #{target_price}"
-        PaymiumService.instance.place_limit_order(direction: direction, btc_amount: @buy_amount, price: target_price)
+        PaymiumService.instance.place_limit_order(direction: direction, btc_amount: amount, price: target_price)
       end
     end
   end
