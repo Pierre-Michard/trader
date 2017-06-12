@@ -25,13 +25,4 @@ ActiveRecord::Schema.define(version: 20170410173049) do
     t.index ["paymium_uuid"], name: "index_trades_on_paymium_uuid", unique: true, using: :btree
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string   "paymium_secret"
-    t.string   "paymium_token"
-    t.string   "kraken_secret"
-    t.string   "kraken_token"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
 end
