@@ -49,7 +49,9 @@ class PaymiumService
   end
 
   def current_orders
-    client.get('user/orders', {'types[]': 'LimitOrder', active: true}).map{|o| o.with_indifferent_access}
+    Rails.cache.fetch(:current_orders, expires_in: 5.seconds) do
+      client.get('user/orders', {'types[]': 'LimitOrder', active: true}).map{|o| o.with_indifferent_access}
+    end
   end
 
   def current_sell_orders
@@ -102,6 +104,7 @@ class PaymiumService
 
   def cancel_order(order)
     Rails.cache.delete(:paymium_user)
+    Rails.cache.delete(:current_orders)
     client.delete("user/orders/#{order['uuid']}/cancel")
   end
 
@@ -114,6 +117,7 @@ class PaymiumService
 
   def place_limit_order(direction:, btc_amount:, price:)
     Rails.cache.delete(:paymium_user)
+    Rails.cache.delete(:current_orders)
     client.post('user/orders', {
         type: 'LimitOrder',
         currency: 'EUR',
