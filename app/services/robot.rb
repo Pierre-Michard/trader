@@ -101,9 +101,13 @@ class Robot
     logger.info 'monitor trades'
     trades = PaymiumService.instance.latest_trades
     trades.each do |trade|
-      logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
-      Trade.find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
-        t.btc_amount= trade[:amount]
+      begin
+        logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
+        Trade.find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
+          t.btc_amount= trade[:amount]
+        end
+      rescue Exception => e
+        logger.error "could not create trade #{trade[:uuid]}: #{trade[:amount]} #{e.message}"
       end
     end
 
