@@ -1,5 +1,5 @@
 at_exit do
-  if $PROGRAM_NAME.match?('bin/rails')
+  if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     $exiting_rails=true
     sleep 1
     p 'cancel all orders'
