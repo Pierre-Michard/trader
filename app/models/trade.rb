@@ -33,7 +33,7 @@ class Trade < ApplicationRecord
   end
 
   def set_kraken_price!
-    kraken_price = kraken_remote_price
+    self.kraken_price = kraken_remote_price
     save!
     kraken_price
   end
