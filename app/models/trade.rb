@@ -17,10 +17,6 @@ class Trade < ApplicationRecord
     res[kraken_uuid]
   end
 
-  def kraken_price
-    self[:kraken_price] || set_kraken_price!
-  end
-
   def kraken_status
     kraken_remote_order.status
   end
@@ -32,18 +28,21 @@ class Trade < ApplicationRecord
     end
   end
 
-  def set_kraken_price!
-    self[:kraken_price] = kraken_remote_price
-    save!
-    kraken_price
+  def set_kraken_info!
+    kraken_order = kraken_remote_order
+    if kraken_order.try(:status) == 'closed'
+      self.kraken_price = kraken_order.price.to_f
+      self.kraken_fee =   kraken_order.fee.to_f
+      save!
+    end
   end
 
-  def self.set_kraken_price
-    Trade.where(kraken_price: nil).where.not(kraken_uuid: nil).find_each do |t|
+  def self.set_kraken_info
+    Trade.where(kraken_fee: nil).where.not(kraken_uuid: nil).find_each do |t|
       begin
-        t.set_kraken_price!
+        t.set_kraken_info!
       rescue => e
-        Rails.logger.error("#{e.class} raised when setting kraken price for order #{t.kraken_uuid}")
+        Rails.logger.error("#{e.class} raised when setting kraken info for order #{t.kraken_uuid}")
       end
     end
   end
