@@ -43,7 +43,7 @@ class Trade < ApplicationRecord
       begin
         t.set_kraken_price!
       rescue => e
-        Rails.logger.error("#{e.class} raised when setting kraken price for order #{t.uuid}")
+        Rails.logger.error("#{e.class} raised when setting kraken price for order #{t.kraken_uuid}")
       end
     end
   end
