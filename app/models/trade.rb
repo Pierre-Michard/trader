@@ -13,6 +13,7 @@ class Trade < ApplicationRecord
   end
 
   def get_kraken_order
-    Kraken.instance.client.private.query_orders(txid: kraken_uuid, trades: true)
+    res = Kraken.instance.client.private.query_orders(txid: kraken_uuid, trades: true)
+    res[kraken_uuid]
   end
 end
