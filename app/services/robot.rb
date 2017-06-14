@@ -10,6 +10,8 @@ class Robot
     @target_buy_marge = TARGET_BUY_MARGE
     @target_sell_marge = TARGET_SELL_MARGE
     @marge_tolerance = MARGE_TOLERANCE
+
+    @is_kraken_open_order = Kraken.instance.open_orders?
   end
 
   def paymium_btc_balance
@@ -86,7 +88,7 @@ class Robot
       end
 
       amount = send("#{direction}_amount")
-      if amount > MIN_TRADE_AMOUNT
+      if amount > MIN_TRADE_AMOUNT && !@is_kraken_open_order
         logger.info "place Paymium buy order amount: #{amount}, price #{target_price}"
         PaymiumService.instance.place_limit_order(direction: direction, btc_amount: amount, price: target_price)
       end

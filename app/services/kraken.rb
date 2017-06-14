@@ -26,6 +26,10 @@ class Kraken
     end
   end
 
+  def open_orders?
+    not client.private.open_orders.open.count.zero?
+  end
+
   def balance_eur
     balance.try(:ZEUR).to_f || 0
   end
