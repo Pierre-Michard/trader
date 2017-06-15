@@ -8,8 +8,8 @@ class Trade < ApplicationRecord
       self.kraken_uuid = Kraken.instance.place_market_order(
           direction:  (btc_amount > 0)? :sell : :buy,
           btc_amount: btc_amount.abs)
+      self.save!
     end
-    self.save!
   end
 
   def kraken_remote_order
