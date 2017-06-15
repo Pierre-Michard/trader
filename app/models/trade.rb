@@ -4,7 +4,7 @@ class Trade < ApplicationRecord
 
   after_commit on: :create do
     logger.info "place kraken market order #{btc_amount}"
-    unless Rails.env.development?
+    unless Rails.env.development? or self.kraken_uuid.present?
       self.kraken_uuid = Kraken.instance.place_market_order(
           direction:  (btc_amount > 0)? :sell : :buy,
           btc_amount: btc_amount.abs)
