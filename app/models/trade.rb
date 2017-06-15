@@ -3,8 +3,8 @@ class Trade < ApplicationRecord
   validates :paymium_uuid, presence: true
 
   after_commit on: :create do
-    logger.info "place kraken market order #{btc_amount}"
     unless Rails.env.development? or self.kraken_uuid.present?
+      logger.info "place kraken market order #{btc_amount}"
       self.kraken_uuid = Kraken.instance.place_market_order(
           direction:  (btc_amount > 0)? :sell : :buy,
           btc_amount: btc_amount.abs)
