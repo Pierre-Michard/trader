@@ -44,7 +44,8 @@ class Kraken
     client.delete("user/orders/#{order['uuid']}/cancel")
   end
 
-  def place_market_order(direction:, btc_amount:)
+  def place_market_order(direction:, btc_amount:, nb_retry:3)
+
     res = client.private.add_order({
        pair: 'XXBTZEUR',
        type: direction.to_s,
@@ -53,6 +54,15 @@ class Kraken
     })
     Rails.cache.delete(:kraken_balance)
     res.txid[0]
+
+  rescue => e
+    Rails.logger.warn("An #{e.class} exception occured while trying to place order: #{e.message}")
+    if nb_retry > 0
+      nb_retry = nb_retry - 1
+      retry
+    else
+      raise
+    end
   end
 
 end
