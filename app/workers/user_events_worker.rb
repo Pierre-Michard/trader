@@ -14,9 +14,7 @@ class UserEventsWorker
         PaymiumService.instance.extract_trades(from_orders:orders).each do |trade|
           if trade[:created_at] > 10.minutes.ago
             Sneakers::logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
-            Trade.find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
-              t.btc_amount= trade[:amount]
-            end
+            MonitorTradesJob.perform_later
           end
         end
       end
