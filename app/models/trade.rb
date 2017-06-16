@@ -10,7 +10,7 @@ class Trade < ApplicationRecord
 
   aasm :requires_lock => true do
     state :created, :inital => true
-    state :kraken_order_placed,     before_enter: :place_kraken_order
+    state :kraken_order_placed,     before_enter: :place_counterpart_order
     state :closed,                  before_enter: :set_kraken_info
 
     event :place_kraken_order do
@@ -30,7 +30,7 @@ class Trade < ApplicationRecord
     place_kraken_order! if may_place_kraken_order?
   end
 
-  def place_kraken_order
+  def place_counterpart_order
     unless Rails.env.development? or self.kraken_uuid.present?
       logger.info "place kraken market order #{btc_amount}"
       self.kraken_uuid = Kraken.instance.place_market_order(
