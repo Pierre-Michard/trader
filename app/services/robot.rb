@@ -68,7 +68,7 @@ class Robot
   end
 
   def monitor_price(direction: :buy)
-    @is_kraken_open_order = @is_kraken_open_order.nil? Kraken.instance.open_orders? : @is_kraken_open_order
+    @is_kraken_open_order = (@is_kraken_open_order.nil?)? Kraken.instance.open_orders? : @is_kraken_open_order
     logger.info "monitor_#{direction}_price"
     target_price = send("target_#{direction}_price")
     min_price = target_price * (1 - @marge_tolerance)
