@@ -106,6 +106,8 @@ class Robot
         logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
         Trade.find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
           t.btc_amount= trade[:amount]
+          t.paymium_cost = trade[:counterpart][:amount]
+          t.paymium_price = trade[:order][:price]
         end
       rescue Exception => e
         logger.error "could not create trade #{trade[:uuid]}: #{trade[:amount]} #{e.message}"
