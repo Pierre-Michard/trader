@@ -14,14 +14,14 @@ class Trade < ApplicationRecord
     state :closed,                  before_enter: :set_kraken_info
 
     event :place_kraken_order do
-      transition :from => :created,
-                 :to => :kraken_order_placed
+      transitions :from => :created,
+                  :to => :kraken_order_placed
     end
 
     event :close do
-      transition :from => :kraken_order_placed,
-                 :to => :closed,
-                 :guard => [:kraken_order_closed?]
+      transitions :from => :kraken_order_placed,
+                  :to => :closed,
+                  :guard => [:kraken_order_closed?]
     end
 
   end
@@ -34,9 +34,17 @@ class Trade < ApplicationRecord
     unless Rails.env.development? or self.kraken_uuid.present?
       logger.info "place kraken market order #{btc_amount}"
       self.kraken_uuid = Kraken.instance.place_market_order(
-          direction:  (btc_amount > 0)? :sell : :buy,
+          direction:  kraken_direction,
           btc_amount: btc_amount.abs)
     end
+  end
+
+  def kraken_direction
+    (btc_amount > 0)? :sell : :buy
+  end
+
+  def paymium_direction
+    (btc_amount > 0)? :buy : :sell
   end
 
   def kraken_remote_order
@@ -56,9 +64,13 @@ class Trade < ApplicationRecord
   def set_kraken_info
     if kraken_order_closed?
       self.kraken_price = kraken_remote_order.price.to_f
-      self.kraken_fee =   kraken_remote_order.fee.to_f
-      self.kraken_cost =  kraken_remote_order.cost.to_f
+      self.kraken_fee   = kraken_remote_order.fee.to_f
+      self.kraken_cost  = (kraken_direction == :buy)? - kraken_remote_order.cost.to_f : kraken_remote_order.cost.to_f
     end
+  end
+
+  def eur_margin
+    self.kraken_cost + self.paymium_cost
   end
 
   def set_kraken_info!
