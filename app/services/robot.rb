@@ -10,8 +10,6 @@ class Robot
     @target_buy_marge = TARGET_BUY_MARGE
     @target_sell_marge = TARGET_SELL_MARGE
     @marge_tolerance = MARGE_TOLERANCE
-
-    @is_kraken_open_order = Kraken.instance.open_orders?
   end
 
   def paymium_btc_balance
@@ -70,6 +68,7 @@ class Robot
   end
 
   def monitor_price(direction: :buy)
+    @is_kraken_open_order = @is_kraken_open_order.nil? Kraken.instance.open_orders? : @is_kraken_open_order
     logger.info "monitor_#{direction}_price"
     target_price = send("target_#{direction}_price")
     min_price = target_price * (1 - @marge_tolerance)
