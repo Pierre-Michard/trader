@@ -9,9 +9,4 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     end
   end
 
-  s.every '20s' do
-    unless $exiting_rails
-      MonitorTradesJob.perform_later
-    end
-  end
 end

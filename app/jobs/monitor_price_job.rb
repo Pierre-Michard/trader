@@ -2,6 +2,8 @@ class MonitorPriceJob < ApplicationJob
   @queue='monitor_price'
   def perform
     robot = Robot.new
+
+    robot.monitor_trades
     begin
       robot.monitor_price(direction: :sell)
       robot.monitor_price(direction: :buy)
