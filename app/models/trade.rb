@@ -71,7 +71,9 @@ class Trade < ApplicationRecord
   end
 
   def eur_margin
-    self.kraken_cost + self.paymium_cost
+    if kraken_cost.present? && paymium_cost.present?
+      kraken_cost + paymium_cost
+    end
   end
 
   def set_kraken_info!
