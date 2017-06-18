@@ -78,7 +78,7 @@ class Trade < ApplicationRecord
 
   def percent_margin
     if kraken_price.present? && paymium_price.present?
-      100 * abs(kraken_price - paymium_price) / paymium_price
+      100 * (kraken_price - paymium_price).abs / paymium_price
     end
   end
 
