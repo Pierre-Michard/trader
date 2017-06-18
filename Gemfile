@@ -48,6 +48,7 @@ gem 'resque'
 gem 'rufus-scheduler'
 gem 'kraken_client'
 gem 'chartkick'
+gem 'groupdate'
 
 
 gem 'sinatra', github: 'sinatra/sinatra', require: false

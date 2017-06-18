@@ -101,6 +101,7 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
+    chartkick (2.2.4)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0)
@@ -118,6 +119,8 @@ GEM
     ffi (1.9.18)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
+    groupdate (3.2.0)
+      activesupport (>= 3)
     hashie (3.5.5)
     httparty (0.15.5)
       multi_xml (>= 0.5.2)
@@ -304,8 +307,10 @@ DEPENDENCIES
   capistrano-foreman
   capistrano-rails
   capistrano-rvm
+  chartkick
   coffee-rails (~> 4.2)
   foreman!
+  groupdate
   jbuilder (~> 2.5)
   kraken_client
   listen (~> 3.0.5)

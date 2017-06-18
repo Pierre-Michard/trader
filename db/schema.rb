@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170616152040) do
+ActiveRecord::Schema.define(version: 20170618155151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,15 +20,25 @@ ActiveRecord::Schema.define(version: 20170616152040) do
     t.string   "kraken_uuid"
     t.float    "btc_amount"
     t.float    "eur_amount"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.float    "kraken_price"
     t.float    "kraken_fee"
     t.float    "kraken_cost"
     t.float    "paymium_cost"
     t.float    "paymium_price"
     t.string   "aasm_state"
+    t.string   "paymium_order_uuid"
     t.index ["paymium_uuid"], name: "index_trades_on_paymium_uuid", unique: true, using: :btree
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "paymium_secret"
+    t.string   "paymium_token"
+    t.string   "kraken_secret"
+    t.string   "kraken_token"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
 end
