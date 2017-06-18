@@ -1,9 +1,8 @@
 <h2>Trade volume</h2>
-<%= column_chart [
-  { name: 'volume', data:Trade.group_by_day(:created_at).sum('ABS(btc_amount)')},
-  { name: 'gains',  data:Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost')}
- ]%>
+<%= column_chart Trade.group_by_day(:created_at).sum('ABS(btc_amount)'), stacked: true%>
 
+<h2>Wins</h2>
+<%= column_chart Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost') %>
 
 <h2>Latest trades</h2>
 <table>
