@@ -1,16 +1,26 @@
-<h2>Recently received messages</h2>
+<h2>Latest trades</h2>
 
 <table>
   <thead>
   <tr>
-    <th>Title</th>
+    <th>Created at</th>
+    <th>State</th>
+    <th>BTC amount</th>
+    <th>Kraken price</th>
+    <th>Paymium price</th>
+    <th>Eur margin</th>
   </tr>
   </thead>
 
   <tbody>
-  <% @messages.each do |message| %>
+  <% @trades.each do |trade| %>
       <tr>
-        <td><%= message %></td>
+        <td><%= trade.created_at %></td>
+        <td><%= trade.aasm_state %></td>
+        <td><%= trade.btc_amount %></td>
+        <td><%= trade.kraken_price %></td>
+        <td><%= trade.paymium_price %></td>
+        <td><%= trade.eur_margin %></td>
       </tr>
   <% end %>
   </tbody>
