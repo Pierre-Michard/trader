@@ -5,7 +5,7 @@
 <%= column_chart Trade.group_by_day(:created_at).sum('ABS(btc_amount)') %>
 
 <h2>Wins</h2>
-<%= column_chart Trade.group_by_day(:created_at).sum('paymium_price + kraken_price') %>
+<%= column_chart Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost') %>
 
 <h2>Latest trades</h2>
 <table>
