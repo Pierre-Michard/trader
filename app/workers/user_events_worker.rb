@@ -12,8 +12,9 @@ class UserEventsWorker
 
       unless orders.blank?
         PaymiumService.instance.extract_trades(from_orders:orders).each do |trade|
-          if trade[:created_at] > 10.minutes.ago
+          if trade[:created_at] > 1.minute.ago
             Sneakers::logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
+            Rails.cache.delete(:current_orders)
             MonitorTradesJob.perform_later
           end
         end
