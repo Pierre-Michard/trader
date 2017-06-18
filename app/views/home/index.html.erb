@@ -1,5 +1,6 @@
-<h2>Latest trades</h2>
+<%= line_chart Trade.group_by_day(:created_at).count %>
 
+<h2>Latest trades</h2>
 <table>
   <thead>
   <tr>
@@ -9,6 +10,7 @@
     <th>Kraken price</th>
     <th>Paymium price</th>
     <th>Eur margin</th>
+    <th>percent margin</th>
   </tr>
   </thead>
 
@@ -21,9 +23,8 @@
         <td><%= trade.kraken_price %></td>
         <td><%= trade.paymium_price %></td>
         <td><%= trade.eur_margin %></td>
+        <td><%= trade.percent_margin %></td>
       </tr>
   <% end %>
   </tbody>
 </table>
-
-<%= line_chart Trade.group_by_day(:created_at).count %>
