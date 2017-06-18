@@ -46,9 +46,8 @@ gem 'redis-rack-cache'
 gem 'foreman', git: 'git@github.com:ddollar/foreman.git'
 gem 'resque'
 gem 'rufus-scheduler'
-#gem 'resque-scheduler'
-#gem 'active_scheduler'
 gem 'kraken_client'
+gem 'chartkick'
 
 
 gem 'sinatra', github: 'sinatra/sinatra', require: false
