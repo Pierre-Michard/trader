@@ -3,10 +3,11 @@ class Trade < ApplicationRecord
 
   attr_accessor :kraken_remote_order
 
-  validates :btc_amount,    presence: true
-  validates :paymium_uuid,  presence: true
-  validates :paymium_cost,  presence: true
-  validates :paymium_price, presence: true
+  validates :btc_amount,          presence: true
+  validates :paymium_uuid,        presence: true
+  validates :paymium_cost,        presence: true
+  validates :paymium_price,       presence: true
+  validates :paymium_order_uuid,  presence: true
 
   aasm :requires_lock => true do
     state :created, :inital => true
@@ -76,6 +77,13 @@ class Trade < ApplicationRecord
   def set_kraken_info!
     set_kraken_info
     save!
+  end
+
+
+  def paymium_remote_order
+    return @paymium_remote_order if @paymium_remote_order
+    res = PaymiumService.instance.client.get("user/orders/#{paymium_order_uuid}")
+    @paymium_remote_order = res[kraken_uuid]
   end
 
   def self.set_kraken_info

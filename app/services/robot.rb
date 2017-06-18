@@ -108,6 +108,7 @@ class Robot
           t.btc_amount= trade[:amount]
           t.paymium_cost = trade[:counterpart][:amount]
           t.paymium_price = trade[:order][:price]
+          t.paymium_order_uuid = trade[:order][:uuid]
         end
       rescue Exception => e
         logger.error "could not create trade #{trade[:uuid]}: #{trade[:amount]} #{e.message}"
