@@ -81,9 +81,7 @@ class Trade < ApplicationRecord
 
 
   def paymium_remote_order
-    return @paymium_remote_order if @paymium_remote_order
-    res = PaymiumService.instance.client.get("user/orders/#{paymium_order_uuid}")
-    @paymium_remote_order = res[kraken_uuid]
+    @paymium_remote_order ||= PaymiumService.instance.order(paymium_order_uuid)
   end
 
   def self.set_kraken_info
@@ -100,6 +98,12 @@ class Trade < ApplicationRecord
       rescue => e
         Rails.logger.error("#{e.class} raised when setting kraken info for order #{kraken_uuids}")
       end
+    end
+  end
+
+  def self.close
+    Trade.where(aasm_state: :kraken_order_placed).find_each do |t|
+      t.close! if t.may_close?
     end
   end
 

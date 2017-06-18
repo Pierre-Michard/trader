@@ -66,6 +66,10 @@ class PaymiumService
     client.get('user/orders', {'types[]': ['LimitOrder']}).map{|o| o.with_indifferent_access}
   end
 
+  def order(order_uuid)
+    client.get("user/orders/#{order_uuid}").with_indifferent_access
+  end
+
   def extract_trades(from_orders:)
     from_orders.
         map{|o| o['account_operations'].map{|ao| ao.merge({'order' => o})}}.
