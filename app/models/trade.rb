@@ -101,7 +101,7 @@ class Trade < ApplicationRecord
     end
   end
 
-  def self.close
+  def self.close_orders
     Trade.where(aasm_state: :kraken_order_placed).find_each do |t|
       t.close! if t.may_close?
     end
