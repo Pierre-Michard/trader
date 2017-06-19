@@ -9,4 +9,8 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     end
   end
 
+  s.every '30s' do
+    RefreshPaymiumPublicInfo.perform_later
+  end
+
 end

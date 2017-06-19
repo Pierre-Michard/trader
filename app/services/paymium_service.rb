@@ -131,8 +131,8 @@ class PaymiumService
     })
   end
 
-  def sdepth
-    Rails.cache.fetch(:paymium_sdepth, expires_in: 60.seconds) do
+  def sdepth(force: false)
+    Rails.cache.fetch(:paymium_sdepth, expires_in: 60.seconds, force: force) do
       res = client.get('data/eur/depth').with_indifferent_access
       res[:bids] = res[:bids].reverse
       res
