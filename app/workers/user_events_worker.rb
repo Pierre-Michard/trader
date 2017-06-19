@@ -15,7 +15,7 @@ class UserEventsWorker
           if trade[:created_at] > 1.minute.ago
             Sneakers::logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
             Rails.cache.delete(:current_orders)
-            MonitorTradesJob.perform
+            MonitorTradesJob.perform_later
           end
         end
       end
