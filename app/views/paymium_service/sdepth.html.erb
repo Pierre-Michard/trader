@@ -1,0 +1,44 @@
+<h1>PaymiumService#sdepth</h1>
+
+<div style="width:90%">
+  <div style="width:45%; float:left;">
+    <h2>Bids</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>price</th>
+        <th>amount</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @bids.each do |bid| %>
+          <tr>
+            <td><%= bid[:price] %></td>
+            <td><%= bid[:amount] %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="width:45%; float:right;">
+    <h2>Asks</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>price</th>
+        <th>amount</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @asks.each do |bid| %>
+          <tr>
+            <td><%= bid[:price] %></td>
+            <td><%= bid[:amount] %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
