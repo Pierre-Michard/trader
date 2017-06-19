@@ -1,5 +1,5 @@
 class MonitorPriceJob < ApplicationJob
-  @queue='monitor_price'
+  @queue='trader'
   def perform
     robot = Robot.new
 
