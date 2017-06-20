@@ -39,7 +39,7 @@ class Trade < ApplicationRecord
   def place_counterpart_order
     unless Rails.env.development? or self.kraken_uuid.present?
       logger.info "place kraken market order #{btc_amount}"
-      self.kraken_uuid = Kraken.instance.place_market_order(
+      self.kraken_uuid = KrakenService.instance.place_market_order(
           direction:  kraken_direction,
           btc_amount: btc_amount.abs)
     end
@@ -55,7 +55,7 @@ class Trade < ApplicationRecord
 
   def kraken_remote_order
     return @kraken_remote_order if @kraken_remote_order
-    res = Kraken.instance.client.private.query_orders(txid: kraken_uuid, trades: true)
+    res = KrakenService.instance.client.private.query_orders(txid: kraken_uuid, trades: true)
     @kraken_remote_order = res[kraken_uuid]
   end
 
@@ -104,7 +104,7 @@ class Trade < ApplicationRecord
   def self.set_kraken_info
     Trade.where(kraken_cost: nil).where.not(kraken_uuid: nil).pluck(:kraken_uuid).each_slice(20) do |kraken_uuids|
       begin
-        kraken_orders = Kraken.instance.client.private.query_orders(txid: kraken_uuids.join(','))
+        kraken_orders = KrakenService.instance.client.private.query_orders(txid: kraken_uuids.join(','))
         kraken_orders.each do |kraken_uuid, kraken_order|
           Rails.logger.info("update trade #{kraken_uuid}")
           trade = Trade.find_by(kraken_uuid: kraken_uuid)

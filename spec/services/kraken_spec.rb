@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-describe Kraken do
-  subject{Kraken.instance}
+describe KrakenService do
+  subject{KrakenService.instance}
 
   describe 'current_price' do
     it 'responds correctly' do

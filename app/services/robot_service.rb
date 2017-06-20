@@ -1,4 +1,4 @@
-class Robot
+class RobotService
 
   TARGET_BUY_MARGE= 0.0050
   TARGET_SELL_MARGE= 0.010
@@ -21,11 +21,11 @@ class Robot
   end
 
   def kraken_eur_balance
-    @kraken_eur_balance ||=Kraken.instance.balance_eur
+    @kraken_eur_balance ||=KrakenService.instance.balance_eur
   end
 
   def kraken_btc_balance
-    @kraken_btc_balance ||= Kraken.instance.balance_btc
+    @kraken_btc_balance ||= KrakenService.instance.balance_btc
   end
 
   def sell_amount
@@ -68,7 +68,7 @@ class Robot
   end
 
   def monitor_price(direction: :buy)
-    @is_kraken_open_order = (@is_kraken_open_order.nil?)? Kraken.instance.open_orders? : @is_kraken_open_order
+    @is_kraken_open_order = (@is_kraken_open_order.nil?)? KrakenService.instance.open_orders? : @is_kraken_open_order
     logger.info "monitor_#{direction}_price"
     target_price = send("target_#{direction}_price")
     min_price = target_price * (1 - @marge_tolerance)

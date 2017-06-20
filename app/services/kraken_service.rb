@@ -1,6 +1,6 @@
 require 'singleton'
 
-class Kraken
+class KrakenService
   include Singleton
 
   CONFIG = YAML.load(File.read(Rails.root.join('config', 'secret', 'kraken.yml'))).with_indifferent_access

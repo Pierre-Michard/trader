@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-describe Robot do
-  subject{Robot.new}
+describe RobotService do
+  subject{RobotService.new}
 
   describe 'sell_amount' do
     it 'responds successfully' do

@@ -2,7 +2,7 @@ class MonitorPriceJob < ApplicationJob
   queue_as :trader
 
   def perform
-    robot = Robot.new
+    robot = RobotService.new
 
     robot.monitor_trades
     begin
