@@ -7,6 +7,7 @@ class Trade < ApplicationRecord
   validates :paymium_uuid,        presence: true
   validates :paymium_cost,        presence: true
   validates :paymium_price,       presence: true
+  validates :paymium_order_uuid,  presence: true
 
   aasm :requires_lock => true do
     state :created, :inital => true
