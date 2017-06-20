@@ -13,6 +13,7 @@ class Trade < ApplicationRecord
     state :created, :inital => true
     state :kraken_order_placed,     before_enter: :place_counterpart_order
     state :closed,                  before_enter: :set_kraken_info
+    state :failed
 
     event :place_kraken_order do
       transitions :from => :created,
@@ -23,6 +24,10 @@ class Trade < ApplicationRecord
       transitions :from => :kraken_order_placed,
                   :to => :closed,
                   :guard => [:kraken_order_closed?]
+
+      transitions :from => :kraken_order_placed,
+                  :to => :failed,
+                  :guard => [:kraken_order_canceled?]
     end
 
   end
@@ -60,6 +65,10 @@ class Trade < ApplicationRecord
 
   def kraken_order_closed?
     kraken_remote_order.try(:status) == 'closed'
+  end
+
+  def kraken_order_canceled?
+    kraken_remote_order.try(:status) == 'canceled'
   end
 
   def set_kraken_info
