@@ -24,6 +24,16 @@ describe KrakenService do
     end
   end
 
+  describe 'update_cached_balance' do
+    before do
+      balance = Hashie::Mash.new(:ZEUR => "100.10", :XXBT => "0.01")
+      Rails.cache.write(:kraken_balance, balance)
+    end
+    it 'updates cached balance' do
+      expect{subject.update_cached_balance(:ZEUR, 10)}.to change {subject.balance_eur}.from(100.1).to(110.1)
+    end
+  end
+
   describe 'balance_btc' do
     it 'responds correctly' do
       res = subject.balance_btc
