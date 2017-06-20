@@ -42,18 +42,38 @@ describe KrakenService do
   end
 
   describe 'place a market order' do
-    it 'places an order' do
-      res = subject.place_market_order(direction: :buy, btc_amount: 0.0005)
-      expect(res).to be_a Hash
-      p res[0]
+    it 'returns a string' do
+      res = subject.place_order(type: :limit, direction: :buy, btc_amount: 0.0005, price: 200)
+      expect(res).to be_a String
     end
 
-    it 'places an order' do
-      res = subject.place_market_order(direction: :sell, btc_amount: 0.0005)
-      expect(res).to be_a Hash
-      p res
+    it 'updates balance' do
+      expect{
+        subject.place_order(type: :limit, direction: :buy, btc_amount: 0.005, price: 200)
+      }.to change{subject.balance_eur}.by(-1.0)
     end
 
+    it 'updates cached open_orders' do
+      Rails.cache.clear
+      expect{
+        subject.place_order(type: :limit, direction: :buy, btc_amount: 0.005, price: 200)
+      }.to change{subject.open_orders.count}.by(1)
+      subject.open_orders.each{|key, value| p key, value}
+    end
+
+
+    it 'places an order' do
+      res = subject.place_order(type: :limit, direction: :sell, btc_amount: 0.0005, price: 100_000)
+      expect(res).to be_a String
+    end
+
+  end
+
+  describe 'open_orders' do
+    it 'updates balance' do
+      expect(subject.open_orders).to be_a Hash
+      p subject.open_orders
+    end
   end
 
 end

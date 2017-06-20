@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe Trade, type: :model do
   describe '#create' do
     it 'creates successfully' do
-      expect(KrakenService.instance).to receive(:place_market_order).
-          with(direction: :buy, btc_amount: 0.00689081){ 'OAYVHH-RMM7M-RIA5QH' }
+      expect(KrakenService.instance).to receive(:place_order).
+          with(type: :market, direction: :buy, btc_amount: 0.00689081){ 'OAYVHH-RMM7M-RIA5QH' }
       trade = Trade.find_or_create_by!(paymium_uuid: 'my_uuid') do |t|
         t.btc_amount= -0.00689081
         t.paymium_cost = 15.81
