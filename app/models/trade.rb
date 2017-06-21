@@ -80,8 +80,8 @@ class Trade < ApplicationRecord
   end
 
   def eur_margin
-    if kraken_cost.present? && paymium_cost.present?
-      kraken_cost + paymium_cost
+    if kraken_cost.present? && paymium_cost.present? && kraken_fee.present?
+      kraken_cost + paymium_cost - kraken_fee
     end
   end
 
