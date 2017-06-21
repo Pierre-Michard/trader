@@ -44,10 +44,8 @@ class KrakenService
     end
   end
 
-  def open_orders?(force_fetch: false)
-    Rails.cache.fetch(:kraken_is_order_opened, expires_in: CACHE_EXPIRATION_DELAY.seconds, force: force_fetch) do
-      not open_orders.count.zero?
-    end
+  def open_orders?
+    not open_orders.count.zero?
   end
 
   def balance_eur
