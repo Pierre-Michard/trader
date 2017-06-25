@@ -26,7 +26,8 @@ class KrakenService
 
   def balance(force_fetch: false)
     Rails.cache.fetch(:kraken_balance, expires_in: CACHE_EXPIRATION_DELAY.seconds, force: force_fetch) do
-      client.private.balance
+      balance = client.private.balance
+      AdjustedBalance.new(balance, open_orders).balance
     end
   end
 
@@ -42,6 +43,22 @@ class KrakenService
       cached_orders.merge!(order)
       Rails.cache.write(:kraken_open_orders, cached_orders, expires_in: CACHE_EXPIRATION_DELAY.seconds)
     end
+
+    cached_balance = Rails.cache.read(:kraken_balance)
+    if cached_balance
+      Rails.cache.write(:kraken_balance,
+                        AdjustedBalance.new(cached_balance, order).balance,
+                        expires_in: CACHE_EXPIRATION_DELAY.seconds)
+    end
+  end
+
+  def update_cache
+    Rails.logger.warn('Update kraken cache')
+    open_orders(force_fetch: true)
+    unless open_orders?
+      Rails.logger.warn('Update kraken balance')
+      balance(force_fetch: false)
+    end
   end
 
   def open_orders?
@@ -56,28 +73,12 @@ class KrakenService
     balance.try(:XXBT).to_f || 0
   end
 
-  def update_cached_balance(currency, diff)
-    cached_balance = Rails.cache.read(:kraken_balance)
-    if cached_balance
-      key = translate_currency(currency)
-      cached_balance[key] = (cached_balance[key].to_f + diff).to_s
-      Rails.cache.write(:kraken_balance, cached_balance, expires_in: CACHE_EXPIRATION_DELAY.seconds)
-    end
-  end
-
-
   def cancel_order(order)
     Rails.cache.delete(:kraken_balance)
     client.delete("user/orders/#{order['uuid']}/cancel")
   end
 
   def place_order(type: :market, direction:, btc_amount:, price:, nb_retry:3)
-    if direction == :buy
-      update_cached_balance(:eur, buy_order_estimated_cost(type: type, price: price, btc_amount: btc_amount))
-    else
-      update_cached_balance(:btc, -btc_amount)
-    end
-
     order = {
         pair: 'XXBTZEUR',
         type: direction.to_s,
@@ -102,16 +103,6 @@ class KrakenService
   end
 
   private
-  def translate_currency(currency)
-    case currency
-      when :eur
-        :ZEUR
-      when :btc
-        :XXBT
-      else
-        raise "unknown currency #{currency}"
-    end
-  end
 
   def buy_order_estimated_cost(type:, price:, btc_amount:)
     case type
@@ -121,6 +112,46 @@ class KrakenService
         - price*btc_amount
       else
         raise "unknown order type #{type}"
+    end
+  end
+
+
+  class AdjustedBalance
+    def initialize(kraken_balance, open_orders)
+      @balance = kraken_balance.dup
+      @open_orders = open_orders.dup
+    end
+
+    def balance
+      @balance
+    end
+
+    private
+
+    def adjust_balance
+      @open_orders.each do |_key, order|
+        if order.direction == 'buy'
+          update_balance(:eur, buy_order_estimated_cost(type: order.type.to_sym, price: order.price.to_f, btc_amount: order.volume.to_f))
+        else
+          update_balance(:btc, -order.volume.to_f)
+        end
+      end
+    end
+
+    def update_balance(currency, diff)
+      key = translate_currency(currency)
+      @balance[key] = (@balance[key].to_f + diff).to_s
+    end
+
+    def translate_currency(currency)
+      case currency
+        when :eur
+          :ZEUR
+        when :btc
+          :XXBT
+        else
+          raise "unknown currency #{currency}"
+      end
     end
   end
 

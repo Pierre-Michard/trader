@@ -48,6 +48,7 @@ describe KrakenService do
     end
 
     it 'updates balance' do
+      Rails.cache.clear
       expect{
         subject.place_order(type: :limit, direction: :buy, btc_amount: 0.005, price: 200)
       }.to change{subject.balance_eur}.by(-1.0)
