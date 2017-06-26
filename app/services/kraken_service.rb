@@ -25,10 +25,10 @@ class KrakenService
   end
 
   def balance(force_fetch: false)
-    Rails.cache.fetch(:kraken_balance, expires_in: CACHE_EXPIRATION_DELAY.seconds, force: force_fetch) do
-      balance = client.private.balance
-      AdjustedBalance.new(balance, open_orders).balance
+    balance = Rails.cache.fetch(:kraken_balance, expires_in: CACHE_EXPIRATION_DELAY.seconds, force: force_fetch) do
+      client.private.balance
     end
+    AdjustedBalance.new(balance, open_orders).balance
   end
 
   def open_orders(force_fetch: false)
@@ -43,22 +43,12 @@ class KrakenService
       cached_orders.merge!(order)
       Rails.cache.write(:kraken_open_orders, cached_orders, expires_in: CACHE_EXPIRATION_DELAY.seconds)
     end
-
-    cached_balance = Rails.cache.read(:kraken_balance)
-    if cached_balance
-      Rails.cache.write(:kraken_balance,
-                        AdjustedBalance.new(cached_balance, order).balance,
-                        expires_in: CACHE_EXPIRATION_DELAY.seconds)
-    end
   end
 
   def update_cache
     Rails.logger.warn('Update kraken cache')
     open_orders(force_fetch: true)
-    unless open_orders?
-      Rails.logger.warn('Update kraken balance')
-      balance(force_fetch: false)
-    end
+    balance(force_fetch: true)
   end
 
   def open_orders?
@@ -66,11 +56,11 @@ class KrakenService
   end
 
   def balance_eur
-    balance.try(:ZEUR).to_f || 0
+    BigDecimal.new(balance.try(:ZEUR) || '0')
   end
 
   def balance_btc
-    balance.try(:XXBT).to_f || 0
+    BigDecimal.new(balance.try(:XXBT)|| '0')
   end
 
   def cancel_order(order)
@@ -89,7 +79,7 @@ class KrakenService
 
     res = client.private.add_order(order)
 
-    cache_open_order(Hashie::Mash.new(res.txid[0] => Hashie::Mash.new(order)))
+    cache_open_order(Hashie::Mash.new(res.txid[0] => Hashie::Mash.new(vol: btc_amount.to_s, descr: Hashie::Mash.new(order))))
     res.txid[0]
 
   rescue => e
@@ -104,22 +94,12 @@ class KrakenService
 
   private
 
-  def buy_order_estimated_cost(type:, price:, btc_amount:)
-    case type
-      when :market
-        - KrakenSdepthService.asks_price(btc_amount)
-      when :limit
-        - price*btc_amount
-      else
-        raise "unknown order type #{type}"
-    end
-  end
-
 
   class AdjustedBalance
     def initialize(kraken_balance, open_orders)
       @balance = kraken_balance.dup
       @open_orders = open_orders.dup
+      adjust_balance
     end
 
     def balance
@@ -130,10 +110,10 @@ class KrakenService
 
     def adjust_balance
       @open_orders.each do |_key, order|
-        if order.direction == 'buy'
-          update_balance(:eur, buy_order_estimated_cost(type: order.type.to_sym, price: order.price.to_f, btc_amount: order.volume.to_f))
+        if order.descr.type == 'buy'
+          update_balance(:eur, buy_order_estimated_cost(type: order.descr.ordertype.to_sym, price: order.descr.price.to_f, btc_amount: BigDecimal.new(order.vol)))
         else
-          update_balance(:btc, -order.volume.to_f)
+          update_balance(:btc, -BigDecimal.new(order.vol))
         end
       end
     end
@@ -151,6 +131,17 @@ class KrakenService
           :XXBT
         else
           raise "unknown currency #{currency}"
+      end
+    end
+
+    def buy_order_estimated_cost(type:, price:, btc_amount:)
+      case type
+        when :market
+          - KrakenSdepthService.asks_price(btc_amount)
+        when :limit
+          - price*btc_amount
+        else
+          raise "unknown order type #{type}"
       end
     end
   end

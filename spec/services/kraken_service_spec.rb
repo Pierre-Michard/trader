@@ -47,11 +47,18 @@ describe KrakenService do
       expect(res).to be_a String
     end
 
-    it 'updates balance' do
+    it 'updates balance when buying' do
       Rails.cache.clear
       expect{
         subject.place_order(type: :limit, direction: :buy, btc_amount: 0.005, price: 200)
       }.to change{subject.balance_eur}.by(-1.0)
+    end
+
+    it 'updates balance when selling' do
+      Rails.cache.clear
+      expect{
+        subject.place_order(type: :limit, direction: :sell, btc_amount: 0.005, price: 20000)
+      }.to change{subject.balance_btc}.by(-0.005)
     end
 
     it 'updates cached open_orders' do
