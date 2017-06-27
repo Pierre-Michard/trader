@@ -3,7 +3,7 @@ require 'singleton'
 class KrakenService
   include Singleton
 
-  CACHE_EXPIRATION_DELAY=30.seconds
+  CACHE_EXPIRATION_DELAY=61.seconds
 
   CONFIG = YAML.load(File.read(Rails.root.join('config', 'secret', 'kraken.yml'))).with_indifferent_access
 
