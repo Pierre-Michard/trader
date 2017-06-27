@@ -1,4 +1,4 @@
-class RefreshKrakenAccountJob
+class RefreshKrakenAccountJob < ApplicationJob
   queue_as :refresh_data
 
   def perform
