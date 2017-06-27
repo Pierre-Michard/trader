@@ -39,7 +39,8 @@ class Trade < ApplicationRecord
   def place_counterpart_order
     unless Rails.env.development? or self.kraken_uuid.present?
       logger.info "place kraken market order #{btc_amount}"
-      self.kraken_uuid = KrakenService.instance.place_market_order(
+      self.kraken_uuid = KrakenService.instance.place_order(
+          type: :market,
           direction:  kraken_direction,
           btc_amount: btc_amount.abs)
     end

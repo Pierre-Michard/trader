@@ -13,4 +13,8 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     RefreshPaymiumPublicInfo.perform_later
   end
 
+  s.every '30s' do
+    RefreshKrakenAccountJob.perform_later
+  end
+
 end
