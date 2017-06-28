@@ -41,9 +41,14 @@ describe KrakenService do
     end
   end
 
-  describe 'place a market order' do
-    it 'returns a string' do
+  describe 'place an order' do
+    it 'places limit orders' do
       res = subject.place_order(type: :limit, direction: :buy, btc_amount: 0.0005, price: 200)
+      expect(res).to be_a String
+    end
+
+    it 'places market orders' do
+      res = subject.place_order(direction: :buy, btc_amount: 0.0005)
       expect(res).to be_a String
     end
 
