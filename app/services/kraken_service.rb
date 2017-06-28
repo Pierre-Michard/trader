@@ -68,7 +68,7 @@ class KrakenService
     client.delete("user/orders/#{order['uuid']}/cancel")
   end
 
-  def place_order(type: :market, direction:, btc_amount:, price:, nb_retry:3)
+  def place_order(type: :market, direction:, btc_amount:, price: nil, nb_retry:3)
     order = {
         pair: 'XXBTZEUR',
         type: direction.to_s,

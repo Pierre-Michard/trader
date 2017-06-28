@@ -9,6 +9,7 @@ RSpec.describe Trade, type: :model do
         t.btc_amount= -0.00689081
         t.paymium_cost = 15.81
         t.paymium_price = 2294.71
+        t.paymium_order_uuid = 'paymium order uuid'
       end
 
       expect(trade.reload.kraken_uuid).to eq 'OAYVHH-RMM7M-RIA5QH'
