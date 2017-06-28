@@ -49,6 +49,7 @@ gem 'rufus-scheduler'
 gem 'kraken_client'
 gem 'chartkick'
 gem 'groupdate'
+gem 'activejob-retriable', github: 'SimplyBuilt/activejob-retriable'
 
 
 gem 'sinatra', github: 'sinatra/sinatra', require: false

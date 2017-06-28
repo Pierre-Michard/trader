@@ -14,6 +14,13 @@ GIT
       oj
 
 GIT
+  remote: https://github.com/SimplyBuilt/activejob-retriable.git
+  revision: 5aec37ba9b0906b68eb7abdab9f66141c240046f
+  specs:
+    activejob-retriable (5.0.4)
+      activejob (~> 5.0)
+
+GIT
   remote: https://github.com/sinatra/sinatra.git
   revision: a58834812b455101111ef332c7510bc9083c30d0
   specs:
@@ -302,6 +309,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  activejob-retriable!
   bunny
   byebug
   capistrano-foreman
