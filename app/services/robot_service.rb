@@ -1,23 +1,19 @@
 class RobotService
 
-  TARGET_BUY_MARGE= 0.0030
-  TARGET_SELL_MARGE= 0.015
   MARGE_TOLERANCE= 0.0005
   MIN_TRADE_AMOUNT= 0.001
   MAX_TRADE_AMOUNT= 0.5
 
   def initialize
-    @target_buy_marge = TARGET_BUY_MARGE
-    @target_sell_marge = TARGET_SELL_MARGE
     @marge_tolerance = MARGE_TOLERANCE
   end
 
   def paymium_btc_balance
-    @paymium_btc_balance ||= PaymiumService.instance.balance_btc
+    PaymiumService.instance.balance_btc + PaymiumService.instance.locked_btc
   end
 
   def paymium_eur_balance
-    @paymium_eur_balance ||= PaymiumService.instance.balance_eur
+    PaymiumService.instance.balance_eur + PaymiumService.instance.locked_eur
   end
 
   def kraken_eur_balance
@@ -28,22 +24,48 @@ class RobotService
     @kraken_btc_balance ||= KrakenService.instance.balance_btc
   end
 
+  def sell_capacity
+    [paymium_btc_balance, (kraken_eur_balance/target_sell_price)].min
+  end
+
+  def buy_capacity
+    [paymium_eur_balance/target_buy_price, (kraken_btc_balance)].min
+  end
+
+  def buy_presure
+    buy_capacity/(buy_capacity+sell_capacity)
+  end
+
+  # https://mycurvefit.com/
+  def buy_marge
+    -0.0007692301 + 0.03076923*Math.exp(-2.099644*buy_presure)
+  end
+
+  # https://mycurvefit.com/
+  def sell_marge
+    0.03 - 0.015*sell_presure - 0.01*sell_presure**2
+  end
+
+  def sell_presure
+    sell_capacity/(buy_capacity+sell_capacity)
+  end
+
   def sell_amount
-    @sell_amount ||= [paymium_btc_balance, (kraken_eur_balance/target_sell_price), MAX_TRADE_AMOUNT].min * 0.9
+    @sell_amount ||= [sell_capacity, MAX_TRADE_AMOUNT].min * 0.9
   end
 
   def buy_amount
-    @buy_amount ||= [paymium_eur_balance/target_buy_price, (kraken_btc_balance), MAX_TRADE_AMOUNT].min * 0.9
+    @buy_amount ||= [buy_capacity, MAX_TRADE_AMOUNT].min * 0.9
   end
 
   def target_sell_price
     asks_price = KrakenSdepthService.asks_price(MAX_TRADE_AMOUNT)
-    asks_price *  (1 + @target_sell_marge)
+    asks_price *  (1 + sell_marge)
   end
 
   def target_buy_price
     bids_price = KrakenSdepthService.bids_price(MAX_TRADE_AMOUNT)
-    bids_price *  (1 - @target_buy_marge)
+    bids_price *  (1 - buy_marge)
   end
 
   def keep_only_last_order(orders)

@@ -44,8 +44,16 @@ class PaymiumService
     user['balance_eur']
   end
 
+  def locked_btc
+    user['locked_btc']
+  end
+
   def balance_btc
     user['balance_btc']
+  end
+
+  def locked_eur
+    user['locked_eur']
   end
 
   def current_orders

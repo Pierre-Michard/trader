@@ -28,4 +28,54 @@ describe RobotService do
       expect{subject.monitor_buy_price}.not_to raise_exception
     end
   end
+
+  describe 'buy_marge' do
+    before do
+      allow(subject).to receive(:buy_presure){buy_presure}
+    end
+    context 'huge presure' do
+      let(:buy_presure){1}
+      it 'computes correct marge' do
+        expect(subject.buy_marge).to be_within(0.0001).of(0.003)
+      end
+    end
+    context 'regular presure' do
+      let(:buy_presure){0.5}
+      it 'computes correct marge' do
+        expect(subject.buy_marge).to be_within(0.0001).of(0.01)
+      end
+    end
+    context 'low presure' do
+      let(:buy_presure){0}
+      it 'computes correct marge' do
+        expect(subject.buy_marge).to be_within(0.0001).of(0.03)
+      end
+    end
+
+  end
+
+  describe 'sell_marge' do
+    before do
+      allow(subject).to receive(:sell_presure){sell_presure}
+    end
+    context 'huge presure' do
+      let(:sell_presure){1}
+      it 'computes correct marge' do
+        expect(subject.sell_marge).to be_within(0.0001).of(0.005)
+      end
+    end
+    context 'regular presure' do
+      let(:sell_presure){0.5}
+      it 'computes correct marge' do
+        expect(subject.sell_marge).to be_within(0.0001).of(0.02)
+      end
+    end
+    context 'low presure' do
+      let(:sell_presure){0}
+      it 'computes correct marge' do
+        expect(subject.sell_marge).to be_within(0.0001).of(0.03)
+      end
+    end
+
+  end
 end
