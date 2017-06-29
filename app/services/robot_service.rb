@@ -101,7 +101,7 @@ class RobotService
     target_price = send("target_#{direction}_price")
     min_price = target_price * (1 - @marge_tolerance)
     max_price = target_price * (1 + @marge_tolerance)
-    logger.info "target #{direction} price #{target_price} [#{min_price}-#{max_price}]"
+    logger.info "target #{direction} price #{target_price.to_f} [#{min_price.to_f}-#{max_price.to_f}]"
 
     current_order = send("current_#{direction}_orders").last
     logger.info "current_order price: #{current_order.try(:[], 'price')}"
