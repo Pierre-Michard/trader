@@ -1,4 +1,4 @@
-SERVICES = %w{trader-web@15000.service trader-paymium_private_node@15100.service trader-kraken_public_node@15200.service trader-jobs@15300.service trader-resque@15400.service trader-paymium_public_node@15500.service trader-resque_refresh@15600.service}
+SERVICES = %w{trader-web@15000.service trader-paymium_private_node@15100.service trader-kraken_public_node@15200.service trader-jobs@15300.service trader-resque@15400.service trader-paymium_public_node@15500.service trader-resque_refresh@15600.service trader-resque_scheduler@15700.service}
 
 namespace :app do
   desc "Enable web server"
