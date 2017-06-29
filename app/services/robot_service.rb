@@ -25,11 +25,11 @@ class RobotService
   end
 
   def sell_capacity
-    [paymium_btc_balance, (kraken_eur_balance/target_sell_price)].min
+    [paymium_btc_balance, (kraken_eur_balance/kraken_ask_price)].min
   end
 
   def buy_capacity
-    [paymium_eur_balance/target_buy_price, (kraken_btc_balance)].min
+    [paymium_eur_balance/kraken_bids_price, (kraken_btc_balance)].min
   end
 
   def buy_presure
@@ -58,14 +58,20 @@ class RobotService
     @buy_amount ||= [buy_capacity, MAX_TRADE_AMOUNT].min * 0.9
   end
 
+  def kraken_ask_price(volume: MAX_TRADE_AMOUNT)
+    KrakenSdepthService.asks_price(volume)
+  end
+
+  def kraken_bids_price(volume: MAX_TRADE_AMOUNT)
+    KrakenSdepthService.bids_price(volume)
+  end
+
   def target_sell_price
-    asks_price = KrakenSdepthService.asks_price(MAX_TRADE_AMOUNT)
-    asks_price *  (1 + sell_marge)
+    kraken_ask_price *  (1 + sell_marge)
   end
 
   def target_buy_price
-    bids_price = KrakenSdepthService.bids_price(MAX_TRADE_AMOUNT)
-    bids_price *  (1 - buy_marge)
+    kraken_bids_price *  (1 - buy_marge)
   end
 
   def keep_only_last_order(orders)
