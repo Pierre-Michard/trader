@@ -2,7 +2,7 @@ class RobotService
 
   MARGE_TOLERANCE= 0.0005
   MIN_TRADE_AMOUNT= 0.001
-  MAX_TRADE_AMOUNT= 0.5
+  MAX_TRADE_AMOUNT= 0.8
 
   def initialize
     @marge_tolerance = MARGE_TOLERANCE
