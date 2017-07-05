@@ -42,7 +42,7 @@ describe RobotService do
     context 'regular presure' do
       let(:buy_presure){0.5}
       it 'computes correct marge' do
-        expect(subject.buy_marge).to be_within(0.0001).of(0.01)
+        expect(subject.buy_marge).to be_within(0.0001).of(0.008)
       end
     end
     context 'low presure' do
