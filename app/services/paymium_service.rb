@@ -27,8 +27,8 @@ class PaymiumService
     conn.close
   end
 
-  def user
-    Rails.cache.fetch(:paymium_user, expires_in: 5.seconds) do
+  def user(force_fetch: false)
+    Rails.cache.fetch(:paymium_user, expires_in: 60.seconds, force: force_fetch) do
       client.get('/user').with_indifferent_access
     end
   end
@@ -36,7 +36,7 @@ class PaymiumService
   def update_user(user)
     cached = Rails.cache.read(:paymium_user)
     if cached
-      Rails.cache.write(:paymium_user, cached.merge(user),expires_in: 5.seconds)
+      Rails.cache.write(:paymium_user, cached.merge(user),expires_in: 60.seconds)
     end
   end
 
@@ -56,10 +56,17 @@ class PaymiumService
     user['locked_eur']
   end
 
-  def current_orders
-    Rails.cache.fetch(:current_orders, expires_in: 5.seconds) do
+  def current_orders(force_fetch: false)
+    Rails.cache.fetch(:current_orders, expires_in: 60.seconds, force: force_fetch) do
       client.get('user/orders', {'types[]': 'LimitOrder', active: true}).map{|o| o.with_indifferent_access}
     end
+  end
+
+  def update_cache
+    Rails.logger.warn('Update Paymium user cache')
+    current_orders(force_fetch:true)
+    user(force_fetch:true)
+    orders(force_fetch: true)
   end
 
   def current_sell_orders
@@ -70,8 +77,10 @@ class PaymiumService
     current_orders.select{|o| o['direction'] == 'buy'}
   end
 
-  def orders
-    client.get('user/orders', {'types[]': ['LimitOrder']}).map{|o| o.with_indifferent_access}
+  def orders(force_fetch: false)
+    Rails.cache.fetch(:orders, expires_in: 60.seconds, force: force_fetch) do
+      client.get('user/orders', {'types[]': ['LimitOrder']}).map{|o| o.with_indifferent_access}
+    end
   end
 
   def order(order_uuid)
