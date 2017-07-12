@@ -10,6 +10,9 @@ class MonitorPriceJob < ApplicationJob
       robot.monitor_price(direction: :buy)
     rescue KrakenSdepthService::OutdatedData
       PaymiumService.instance.cancel_all_orders
+    rescue Paymium::Api::Client::Error
+      PaymiumService.instance.cancel_all_orders
+      raise
     end
     robot.cleanup_orders
   end
