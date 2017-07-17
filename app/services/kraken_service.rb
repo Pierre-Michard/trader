@@ -47,8 +47,8 @@ class KrakenService
 
   def update_cache
     Rails.logger.warn('Update kraken cache')
-    open_orders(force_fetch: true)
     balance(force_fetch: true)
+    open_orders(force_fetch: true)
   end
 
   def open_orders?
