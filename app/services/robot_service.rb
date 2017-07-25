@@ -72,7 +72,7 @@ class RobotService
 
   def target_buy_price
     [ (kraken_bids_price *  (1 - buy_marge)),
-      (highest_stranger_bid[:price] + 2)].min
+      (PaymiumService.instance.highest_stranger_bid[:price] + 2)].min
   end
 
 
