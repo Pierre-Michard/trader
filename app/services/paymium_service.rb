@@ -191,10 +191,22 @@ class PaymiumService
   end
 
   def bids
-    sdepth[:bids]
+    sdepth[:bids].each do |bid|
+      bid[:mine] = current_buy_orders.any?{|o| o[:price] == bid[:price]}
+    end
+  end
+
+  def highest_stranger_bid
+    bids.detect{|b| not b[:mine]}
+  end
+
+  def highest_stranger_ask
+    asks.detect{|b| not b[:mine]}
   end
 
   def asks
-    sdepth[:asks]
+    sdepth[:asks].each do |ask|
+      ask[:mine] = current_sell_orders.any?{|o| o[:price] == ask[:price]}
+    end
   end
 end
