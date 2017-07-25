@@ -71,12 +71,8 @@ class RobotService
   end
 
   def target_buy_price
-    target_price = kraken_bids_price *  (1 - buy_marge)
-
-    if target_price > highest_stranger_bid[:price]
-      target_price = highest_stranger_bid[:price] + 2
-    end
-    target_price
+    [ (kraken_bids_price *  (1 - buy_marge)),
+      (highest_stranger_bid[:price] + 2)].min
   end
 
 
