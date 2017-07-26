@@ -55,8 +55,11 @@ class KrakenSdepthService
         rest -= amount
       end
     end
-    raise 'not enougth orders' unless rest <= 0
-    price
+    if rest <= 0
+      price
+    else
+      offers[-1][:price]
+    end
   end
 
 end
