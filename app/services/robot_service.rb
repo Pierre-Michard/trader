@@ -118,7 +118,7 @@ class RobotService
 
       amount = send("#{direction}_amount")
       if amount > MIN_TRADE_AMOUNT && !@is_kraken_open_order
-        logger.info "place Paymium buy order amount: #{amount}, price #{target_price}"
+        logger.info "place Paymium #{direction} order amount: #{amount}, price #{target_price}"
         PaymiumService.instance.place_limit_order(direction: direction, btc_amount: amount, price: target_price)
       end
     end
