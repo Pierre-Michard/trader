@@ -191,8 +191,9 @@ class PaymiumService
   end
 
   def bids
+    my_orders = current_buy_orders
     sdepth[:bids].each do |bid|
-      bid[:mine] = current_buy_orders.any?{|o| o[:price] == bid[:price]}
+      bid[:mine] = my_orders.any?{|o| o[:price] == bid[:price]}
     end
   end
 
