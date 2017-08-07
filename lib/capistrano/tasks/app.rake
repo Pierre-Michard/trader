@@ -47,4 +47,20 @@ namespace :app do
       end
     end
   end
+
+  desc "Create a restart script"
+  task :create_restart_script do
+    on roles(:web) do |host|
+      file_path = '/etc/cron.daily/restart_trader_services'
+
+      file_content = SERVICES.
+          map{|s| s.gsub('.service', '')}.
+          map{|s| "service #{s} restart"}.
+          join("\n")
+
+      execute :sudo, :echo, "'#{file_content}' >/tmp/script"
+      execute :sudo, :mv, '/tmp/script', file_path
+      execute :sudo, :chmod, "+x #{file_path}"
+    end
+  end
 end

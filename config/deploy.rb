@@ -43,3 +43,4 @@ set :foreman_options, ->{ {
 
 after 'deploy:publishing', 'foreman:export'
 after 'foreman:export', 'app:restart'
+after 'app:restart', 'app:create_restart_script'
