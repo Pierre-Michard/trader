@@ -94,6 +94,8 @@ class RobotService
   end
 
   def cleanup_orders
+    #todo fix the bug and remove this
+    PaymiumService.instance.current_orders(force_fetch:true)
     keep_only_last_order(current_sell_orders)
     keep_only_last_order(current_buy_orders)
   end

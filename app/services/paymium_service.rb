@@ -130,7 +130,7 @@ class PaymiumService
   end
 
   def cancel_all_orders
-    current_orders.each do |o|
+    current_orders(force_fetch:true).each do |o|
       p "cancel order #{o}"
       cancel_order(o)
     end
