@@ -67,7 +67,8 @@ class RobotService
   end
 
   def target_sell_price
-    kraken_ask_price *  (1 + sell_marge)
+    [ kraken_ask_price *  (1 + sell_marge),
+      (PaymiumService.instance.highest_stranger_ask[:price] - 2)].max
   end
 
   def target_buy_price

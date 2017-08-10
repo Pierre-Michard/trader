@@ -187,6 +187,13 @@ class PaymiumService
   end
 
   def update_sdepth(new_sdepth)
+    first_bid = bids.first
+    first_ask = asks.first
+    if (!first_bid[:mine] && new_sdepth[:bids].first[:amount] != first_bid[:amount]) ||
+        (!first_ask[:mine] && new_sdepth[:asks].first[:amount] != first_ask[:amount])
+      MonitorPriceJob.perform_later
+    end
+
     Rails.cache.write(:paymium_sdepth, new_sdepth, expires_in: 60.seconds)
   end
 
