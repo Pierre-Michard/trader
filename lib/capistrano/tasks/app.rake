@@ -53,7 +53,8 @@ namespace :app do
     on roles(:web) do |host|
       file_path = '/etc/cron.daily/restart_trader_services'
 
-      file_content = SERVICES.
+      file_content = "#!/bin/sh\n"
+      file_content += SERVICES.
           map{|s| s.gsub('.service', '')}.
           map{|s| "service #{s} restart"}.
           join("\n")
