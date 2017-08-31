@@ -138,7 +138,6 @@ class PaymiumService
 
   def place_limit_order(direction:, btc_amount:, price:)
     Rails.cache.delete(:paymium_user)
-    Rails.cache.delete(:current_orders)
     res = client.post('user/orders', {
         type: 'LimitOrder',
         currency: 'EUR',
@@ -146,7 +145,9 @@ class PaymiumService
         amount: btc_amount,
         price: price.round(2)
     })
-    p res
+
+    Rails.cache.delete(:current_orders)
+    logger.info("placed order: #{res}")
   end
 
   def sdepth(force: false)
