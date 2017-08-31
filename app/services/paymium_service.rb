@@ -125,8 +125,8 @@ class PaymiumService
 
   def cancel_order(order)
     Rails.cache.delete(:paymium_user)
-    Rails.cache.delete(:current_orders)
     client.delete("user/orders/#{order['uuid']}/cancel")
+    Rails.cache.write(:current_orders, current_orders.select{|o| o['uuid'] != order['uuid']}, expires_in: 60.seconds)
   end
 
   def cancel_all_orders
@@ -145,9 +145,7 @@ class PaymiumService
         amount: btc_amount,
         price: price.round(2)
     })
-
-    Rails.cache.delete(:current_orders)
-    Rails.logger.info("placed order: #{res}")
+    Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: 60.seconds)
   end
 
   def sdepth(force: false)
