@@ -35,12 +35,12 @@ class RobotService
 
   # https://mycurvefit.com/
   def buy_marge
-    0.003958333 + 0.02604167*Math.exp(-6.437752*buy_presure)
+    0.003111111 + 0.02688889*Math.exp(-3.409496*buy_presure)
   end
 
   # https://mycurvefit.com/
   def sell_marge
-    0.003958333 + 0.02604167*Math.exp(-6.437752*buy_presure)
+    0.003111111 + 0.02688889*Math.exp(-3.409496*buy_presure)
   end
 
   def sell_presure
