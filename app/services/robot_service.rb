@@ -101,6 +101,7 @@ class RobotService
     @is_kraken_open_order = (@is_kraken_open_order.nil?)? KrakenService.instance.open_orders? : @is_kraken_open_order
     logger.info "monitor_#{direction}_price"
     target_min_price, target_max_price = send("target_#{direction}_price")
+    target_price =(direction == :sell)? target_max_price : target_min_price
     logger.info "target #{direction} price #{target_price.to_f}"
 
     current_order = send("current_#{direction}_orders").last
@@ -116,7 +117,7 @@ class RobotService
 
       amount = send("#{direction}_amount")
       if amount > MIN_TRADE_AMOUNT && !@is_kraken_open_order
-        target_price =(direction == :sell)? target_max_price : target_min_price
+
         logger.info "place Paymium #{direction} order amount: #{amount}, price #{target_price}"
         PaymiumService.instance.place_limit_order(direction: direction, btc_amount: amount, price: target_price)
       end
