@@ -102,7 +102,7 @@ class RobotService
     logger.info "monitor_#{direction}_price"
     target_min_price, target_max_price = send("target_#{direction}_price")
     target_price =(direction == :sell)? target_max_price : target_min_price
-    logger.info "target #{direction} price #{target_price.to_f}"
+    logger.info "target #{direction} price #{target_price.to_f} [#{target_min_price.to_f} - #{target_max_price.to_f}]"
 
     current_order = send("current_#{direction}_orders").last
     logger.info "current_order price: #{current_order.try(:[], 'price')}"
