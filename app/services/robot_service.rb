@@ -1,11 +1,8 @@
 class RobotService
-
-  MARGE_TOLERANCE= 0.0005
   MIN_TRADE_AMOUNT= 0.001
   MAX_TRADE_AMOUNT= 0.8
 
   def initialize
-    @marge_tolerance = MARGE_TOLERANCE
   end
 
   def paymium_btc_balance
@@ -38,12 +35,12 @@ class RobotService
 
   # https://mycurvefit.com/
   def buy_marge
-    0.001529412 + 0.02847059*Math.exp(-2.963209*buy_presure)
+    0.003958333 + 0.02604167*Math.exp(-6.437752*buy_presure)
   end
 
   # https://mycurvefit.com/
   def sell_marge
-    0.003333334 + 0.02666667*Math.exp(-2.772589*sell_presure)
+    0.003958333 + 0.02604167*Math.exp(-6.437752*buy_presure)
   end
 
   def sell_presure
@@ -67,13 +64,13 @@ class RobotService
   end
 
   def target_sell_price
-    [ kraken_ask_price *  (1 + sell_marge),
-      (PaymiumService.instance.highest_stranger_ask[:price] - 2)].max
+    next_ask = PaymiumService.instance.highest_stranger_ask(kraken_ask_price * (1 + sell_marge))
+    next_ask[:price] - 0.05
   end
 
   def target_buy_price
-    [ (kraken_bids_price *  (1 - buy_marge)),
-      (PaymiumService.instance.highest_stranger_bid[:price] + 2)].min
+    next_ask = PaymiumService.instance.highest_stranger_bid(kraken_bids_price * (1 - buy_marge))
+    next_ask[:price] + 0.05
   end
 
 
@@ -104,15 +101,12 @@ class RobotService
     @is_kraken_open_order = (@is_kraken_open_order.nil?)? KrakenService.instance.open_orders? : @is_kraken_open_order
     logger.info "monitor_#{direction}_price"
     target_price = send("target_#{direction}_price")
-    min_price = target_price * (1 - @marge_tolerance)
-    max_price = target_price * (1 + @marge_tolerance)
-    logger.info "target #{direction} price #{target_price.to_f} [#{min_price.to_f}-#{max_price.to_f}]"
+    logger.info "target #{direction} price #{target_price.to_f}"
 
     current_order = send("current_#{direction}_orders").last
     logger.info "current_order price: #{current_order.try(:[], 'price')}"
     unless current_order &&
-        current_order['price'] > min_price &&
-        current_order['price'] < max_price
+        current_order['price'] == target_price
 
       if current_order
         logger.info "cancel #{direction} order"

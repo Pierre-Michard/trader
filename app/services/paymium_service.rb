@@ -204,12 +204,12 @@ class PaymiumService
     end
   end
 
-  def highest_stranger_bid
-    bids.detect{|b| not b[:mine]}
+  def highest_stranger_bid(lower_than:)
+    bids.detect{|b| (not b[:mine]) && b[:price]< lower_than}
   end
 
-  def highest_stranger_ask
-    asks.detect{|b| not b[:mine]}
+  def highest_stranger_ask(higher_than:)
+    asks.detect{|b| not b[:mine] && b[:price]> higher_than}
   end
 
   def asks
