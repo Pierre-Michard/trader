@@ -209,7 +209,7 @@ class PaymiumService
   end
 
   def highest_stranger_ask(higher_than)
-    asks.detect{|b| not b[:mine] && b[:price]> higher_than}
+    asks.detect{|b| (not b[:mine]) && b[:price]> higher_than}
   end
 
   def asks
