@@ -147,7 +147,7 @@ class PaymiumService
     })
 
     Rails.cache.delete(:current_orders)
-    logger.info("placed order: #{res}")
+    Rails.logger.info("placed order: #{res}")
   end
 
   def sdepth(force: false)
