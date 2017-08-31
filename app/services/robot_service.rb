@@ -65,12 +65,12 @@ class RobotService
 
   def target_sell_price
     next_ask = PaymiumService.instance.highest_stranger_ask(kraken_ask_price * (1 + sell_marge))
-    [next_ask[:price] - 1, next_ask[:price] - 0.05]
+    next_ask[:price] - 0.05
   end
 
   def target_buy_price
-    next_bid = PaymiumService.instance.highest_stranger_bid(kraken_bids_price * (1 - buy_marge))
-    [next_bid[:price] + 0.05, next_bid[:price] + 1]
+    next_ask = PaymiumService.instance.highest_stranger_bid(kraken_bids_price * (1 - buy_marge))
+    next_ask[:price] + 0.05
   end
 
 
@@ -100,15 +100,13 @@ class RobotService
   def monitor_price(direction: :buy)
     @is_kraken_open_order = (@is_kraken_open_order.nil?)? KrakenService.instance.open_orders? : @is_kraken_open_order
     logger.info "monitor_#{direction}_price"
-    target_min_price, target_max_price = send("target_#{direction}_price")
-    target_price =(direction == :sell)? target_max_price : target_min_price
-    logger.info "target #{direction} price #{target_price.to_f} [#{target_min_price.to_f} - #{target_max_price.to_f}]"
+    target_price = send("target_#{direction}_price")
+    logger.info "target #{direction} price #{target_price.to_f}"
 
     current_order = send("current_#{direction}_orders").last
     logger.info "current_order price: #{current_order.try(:[], 'price')}"
     unless current_order &&
-        current_order['price'] >= target_min_price &&
-        current_order['price'] <= target_max_price
+        current_order['price'] == target_price
 
       if current_order
         logger.info "cancel #{direction} order"
@@ -117,7 +115,6 @@ class RobotService
 
       amount = send("#{direction}_amount")
       if amount > MIN_TRADE_AMOUNT && !@is_kraken_open_order
-
         logger.info "place Paymium #{direction} order amount: #{amount}, price #{target_price}"
         PaymiumService.instance.place_limit_order(direction: direction, btc_amount: amount, price: target_price)
       end
