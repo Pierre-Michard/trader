@@ -25,6 +25,80 @@
   </tbody>
 </table>
 
+<h2>Balances</h2>
+<table>
+  <thead>
+  <tr>
+    <th>exchange</th>
+    <th>currency</th>
+    <th>btc</th>
+    <th>eur</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr>
+    <td>Paymium</td>
+    <td>eur</td>
+    <td><%= (@robot.paymium_eur_balance / @robot.kraken_ask_price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= @robot.paymium_eur_balance.round(2) %></td>
+  </tr>
+  <tr>
+    <td>Kraken</td>
+    <td>btc</td>
+    <td bgcolor="#CCFFCC"><%= @robot.kraken_btc_balance.round(2) %></td>
+    <td><%= (@robot.kraken_btc_balance * @robot.kraken_ask_price).round(2) %></td>
+  </tr>
+  <tr>
+    <td>Paymium</td>
+    <td>btc</td>
+    <td bgcolor="#CCFFCC"><%= @robot.paymium_btc_balance.round(2) %></td>
+    <td><%= (@robot.paymium_btc_balance * @robot.kraken_ask_price).round(2) %></td>
+  </tr>
+  <tr>
+    <td>Kraken</td>
+    <td>eur</td>
+    <td><%= (@robot.kraken_eur_balance / @robot.kraken_ask_price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= @robot.kraken_eur_balance.round(2) %></td>
+  </tr>
+  <tr>
+    <td>Total</td>
+    <td>eur</td>
+    <td><%= ((@robot.kraken_eur_balance + @robot.paymium_eur_balance)/ @robot.kraken_ask_price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= (@robot.kraken_eur_balance + @robot.paymium_eur_balance).round(2) %></td>
+  </tr>
+  <tr>
+    <td>Total</td>
+    <td>btc</td>
+    <td bgcolor="#CCFFCC"><%= (@robot.kraken_btc_balance + @robot.paymium_btc_balance).round(2) %></td>
+    <td><%= ((@robot.kraken_btc_balance + @robot.paymium_btc_balance)*@robot.kraken_ask_price).round(2) %></td>
+  </tr>
+  <tr>
+    <td>Total</td>
+    <td>total</td>
+    <td><%= (@robot.total_virtual_btc).round(2) %></td>
+    <td><%= (@robot.total_virtual_eur).round(2) %></td>
+  </tr>
+
+  <tr>
+    <td>Kraken - Paymium</td>
+    <td>total</td>
+    <td><%= (@robot.total_kraken_virtual_btc - @robot.total_paymium_virtual_btc).round(2) %></td>
+    <td><%= (@robot.total_kraken_virtual_eur - @robot.total_paymium_virtual_eur).round(2) %></td>
+  </tr>
+
+  <tr>
+    <td>Btc - Eur</td>
+    <td>total</td>
+    <td><%= (@robot.total_btc - @robot.total_eur/@robot.kraken_ask_price).round(2) %></td>
+    <td><%= (@robot.total_btc*@robot.kraken_ask_price - @robot.total_eur).round(2) %></td>
+  </tr>
+
+  </tbody>
+</table>
+
+
+
 <h2>Trade volume</h2>
 <%= column_chart Trade.group_by_day(:created_at).sum('ABS(btc_amount)')%>
 

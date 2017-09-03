@@ -21,6 +21,39 @@ class RobotService
     @kraken_btc_balance ||= KrakenService.instance.balance_btc
   end
 
+  def total_paymium_virtual_btc
+    paymium_btc_balance  + (paymium_eur_balance)/kraken_ask_price
+  end
+
+  def total_paymium_virtual_eur
+    paymium_eur_balance  + (paymium_btc_balance)*kraken_ask_price
+  end
+
+  def total_kraken_virtual_btc
+    kraken_btc_balance  + (kraken_eur_balance)/kraken_ask_price
+  end
+
+  def total_kraken_virtual_eur
+    kraken_eur_balance  + (kraken_btc_balance)*kraken_ask_price
+  end
+
+  def total_virtual_btc
+    total_kraken_virtual_btc + total_paymium_virtual_btc
+  end
+
+  def total_virtual_eur
+    total_kraken_virtual_eur + total_paymium_virtual_eur
+  end
+
+  def total_btc
+    kraken_btc_balance + paymium_btc_balance
+  end
+
+  def total_eur
+    kraken_eur_balance + paymium_eur_balance
+  end
+
+
   def sell_capacity
     [paymium_btc_balance, (kraken_eur_balance/kraken_ask_price)].min
   end
