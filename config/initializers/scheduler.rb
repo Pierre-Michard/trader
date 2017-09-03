@@ -21,6 +21,15 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     RefreshKrakenAccountJob.perform_later unless Resque.size('trader_production_refresh_data') > 2
   end
 
+  s.every '1m' do
+    Trade.
+        where('created_at > ?', 30.minutes.ago).
+        where(aasm_state: 'created').
+        where('btc_amount > ?', 0.001).find_each do |t|
+      t.place_kraken_order!
+    end
+  end
+
   s.every '1h' do
     Stat.create!
   end
