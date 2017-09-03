@@ -1,10 +1,11 @@
 <h2>Marge</h2>
-<table>
+<table width="50%">
   <thead>
   <tr>
     <th>direction</th>
     <th>presure</th>
     <th>marge</th>
+    <th>actual marge</th>
     <th>amount</th>
   </tr>
   </thead>
@@ -14,16 +15,19 @@
     <td>sell</td>
     <td><%= @robot.sell_presure.round(2) %></td>
     <td><%= (@robot.sell_marge * 100).round(2) %></td>
-    <td><%= @robot.sell_capacity %></td>
+    <td><%= (((@stat.paymium_best_ask - @stat.kraken_best_bid)/@stat.price)*100).round(2) %></td>
+    <td><%= @robot.sell_capacity.round(3) %></td>
   </tr>
   <tr>
     <td>buy</td>
     <td><%= @robot.buy_presure.round(2) %></td>
     <td><%= (@robot.buy_marge * 100).round(2) %></td>
-    <td><%= @robot.buy_capacity %></td>
+    <td><%= (((-@stat.paymium_best_bid + @stat.kraken_best_ask)/@stat.price)*100).round(2) %></td>
+    <td><%= @robot.buy_capacity.round(3) %></td>
   </tr>
   </tbody>
 </table>
+
 
 <h2>Balances</h2>
 <table>
@@ -40,51 +44,51 @@
   <tr>
     <td>Paymium</td>
     <td>eur</td>
-    <td><%= (@robot.paymium_eur_balance / @robot.kraken_ask_price).round(2) %></td>
-    <td bgcolor="#CCFFCC"><%= @robot.paymium_eur_balance.round(2) %></td>
+    <td><%= (@stat.paymium_eur_balance / @stat.price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= @stat.paymium_eur_balance.round(2) %></td>
   </tr>
   <tr>
     <td>Kraken</td>
     <td>btc</td>
-    <td bgcolor="#CCFFCC"><%= @robot.kraken_btc_balance.round(2) %></td>
-    <td><%= (@robot.kraken_btc_balance * @robot.kraken_ask_price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= @stat.kraken_btc_balance.round(2) %></td>
+    <td><%= (@stat.kraken_btc_balance * @stat.price).round(2) %></td>
   </tr>
   <tr>
     <td>Paymium</td>
     <td>btc</td>
-    <td bgcolor="#CCFFCC"><%= @robot.paymium_btc_balance.round(2) %></td>
-    <td><%= (@robot.paymium_btc_balance * @robot.kraken_ask_price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= @stat.paymium_btc_balance.round(2) %></td>
+    <td><%= (@stat.paymium_btc_balance * @stat.price).round(2) %></td>
   </tr>
   <tr>
     <td>Kraken</td>
     <td>eur</td>
-    <td><%= (@robot.kraken_eur_balance / @robot.kraken_ask_price).round(2) %></td>
-    <td bgcolor="#CCFFCC"><%= @robot.kraken_eur_balance.round(2) %></td>
+    <td><%= (@stat.kraken_eur_balance / @stat.price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= @stat.kraken_eur_balance.round(2) %></td>
   </tr>
   <tr>
     <td>Total</td>
     <td>eur</td>
-    <td><%= ((@robot.kraken_eur_balance + @robot.paymium_eur_balance)/ @robot.kraken_ask_price).round(2) %></td>
-    <td bgcolor="#CCFFCC"><%= (@robot.kraken_eur_balance + @robot.paymium_eur_balance).round(2) %></td>
+    <td><%= ((@stat.kraken_eur_balance + @stat.paymium_eur_balance)/ @stat.price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= (@stat.kraken_eur_balance + @stat.paymium_eur_balance).round(2) %></td>
   </tr>
   <tr>
     <td>Total</td>
     <td>btc</td>
-    <td bgcolor="#CCFFCC"><%= (@robot.kraken_btc_balance + @robot.paymium_btc_balance).round(2) %></td>
-    <td><%= ((@robot.kraken_btc_balance + @robot.paymium_btc_balance)*@robot.kraken_ask_price).round(2) %></td>
+    <td bgcolor="#CCFFCC"><%= (@stat.kraken_btc_balance + @stat.paymium_btc_balance).round(2) %></td>
+    <td><%= ((@stat.kraken_btc_balance + @stat.paymium_btc_balance)*@stat.price).round(2) %></td>
   </tr>
   <tr>
     <td>Total</td>
     <td>total</td>
-    <td><%= (@robot.total_virtual_btc).round(2) %></td>
-    <td><%= (@robot.total_virtual_eur).round(2) %></td>
+    <td><%= (@stat.total_virtual_btc).round(2) %></td>
+    <td><%= (@stat.total_virtual_eur).round(2) %></td>
   </tr>
 
   <tr>
     <td>Kraken - Paymium</td>
     <td>total</td>
-    <td><%= (@robot.total_kraken_virtual_btc - @robot.total_paymium_virtual_btc).round(2) %></td>
-    <td><%= (@robot.total_kraken_virtual_eur - @robot.total_paymium_virtual_eur).round(2) %></td>
+    <td><%= (@stat.total_kraken_virtual_btc - @stat.total_paymium_virtual_btc).round(2) %></td>
+    <td><%= (@stat.total_kraken_virtual_eur - @stat.total_paymium_virtual_eur).round(2) %></td>
   </tr>
 
   <tr>
@@ -104,6 +108,13 @@
 
 <h2>Wins</h2>
 <%= column_chart Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost - kraken_fee') %>
+
+<h2>Btc Balance</h2>
+<%= area_chart Stat.group_by_day(:created_at).average('(kraken_btc_balance + paymium_btc_balance)')%>
+
+<h2>Eur Balance</h2>
+<%= area_chart Stat.group_by_day(:created_at).average('(kraken_eur_balance + paymium_eur_balance)')%>
+
 
 <h2>Latest trades</h2>
 <table>

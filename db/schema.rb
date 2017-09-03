@@ -10,10 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170618155151) do
+ActiveRecord::Schema.define(version: 20170903170229) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "stats", force: :cascade do |t|
+    t.float    "paymium_eur_balance"
+    t.float    "paymium_btc_balance"
+    t.float    "kraken_eur_balance"
+    t.float    "kraken_btc_balance"
+    t.float    "price"
+    t.float    "paymium_best_bid"
+    t.float    "paymium_best_ask"
+    t.float    "kraken_best_bid"
+    t.float    "kraken_best_ask"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
 
   create_table "trades", force: :cascade do |t|
     t.string   "paymium_uuid"
