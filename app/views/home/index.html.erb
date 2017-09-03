@@ -94,8 +94,8 @@
   <tr>
     <td>Btc - Eur</td>
     <td>total</td>
-    <td><%= (@robot.total_btc - @robot.total_eur/@robot.kraken_ask_price).round(2) %></td>
-    <td><%= (@robot.total_btc*@robot.kraken_ask_price - @robot.total_eur).round(2) %></td>
+    <td><%= (@stat.total_btc - @stat.total_eur/@stat.kraken_ask_price).round(2) %></td>
+    <td><%= (@stat.total_btc*@stat.kraken_ask_price - @stat.total_eur).round(2) %></td>
   </tr>
 
   </tbody>
