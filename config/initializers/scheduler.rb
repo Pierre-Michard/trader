@@ -25,7 +25,7 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     Trade.
         where('created_at > ?', 30.minutes.ago).
         where(aasm_state: 'created').
-        where('btc_amount > ?', 0.001).find_each do |t|
+        where('abs(btc_amount) > ?', 0.001).find_each do |t|
       t.place_kraken_order!
     end
   end
