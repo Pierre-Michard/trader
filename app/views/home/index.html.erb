@@ -109,9 +109,11 @@
 <h2>Wins</h2>
 <%= column_chart Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost - kraken_fee') %>
 
+<%#
 <h2>Btc Balance</h2>
 <%= area_chart Stat.group_by_day(:created_at).average('(kraken_btc_balance + paymium_btc_balance)')%>
 
+<%#
 <h2>Eur Balance</h2>
 <%= area_chart Stat.group_by_day(:created_at).average('(kraken_eur_balance + paymium_eur_balance)')%>
 
