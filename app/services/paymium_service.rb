@@ -124,8 +124,8 @@ class PaymiumService
   end
 
 
-  def orders_text(orders)
-    str = orders.map do |order|
+  def current_orders_descr
+    str = current_orders.map do |order|
       "#{order[:created_at]} #{order[:uuid]}: #{order[:direction]} #{order[:amount].to_f.round(3)} #{order[:state]}"
     end
     str.join("\n")
@@ -134,11 +134,11 @@ class PaymiumService
 
   def cancel_order(order)
     Rails.cache.delete(:paymium_user)
-    Rails.logger.info(">>>> current orders before delete #{orders_text(current_orders)}")
+    Rails.logger.info(">>>> current orders before delete #{current_orders_descr}")
     Rails.logger.info "cancel order #{order['uuid']}"
     client.delete("user/orders/#{order['uuid']}/cancel")
     Rails.cache.write(:current_orders, current_orders.select{|o| o['uuid'] != order['uuid']}, expires_in: 60.seconds)
-    Rails.logger.info(">>>> current orders after delete #{orders_text(current_orders)}")
+    Rails.logger.info(">>>> current orders after delete #{current_orders_descr}")
   end
 
   def cancel_all_orders
@@ -156,9 +156,9 @@ class PaymiumService
         amount: btc_amount,
         price: price.round(2)
     })
-    Rails.logger.info(">>>> current orders before create #{orders_text(current_orders)}")
+    Rails.logger.info(">>>> current orders before create #{current_orders_descr}")
     Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: 60.seconds)
-    Rails.logger.info(">>>> current orders after create #{orders_text(current_orders)}")
+    Rails.logger.info(">>>> current orders after create #{current_orders_descr}")
   end
 
   def sdepth(force: false)
