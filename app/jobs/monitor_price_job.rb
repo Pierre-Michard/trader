@@ -1,6 +1,10 @@
 class MonitorPriceJob < ApplicationJob
   queue_as :trader
 
+  after_exception do
+    Rails.logger.error "Exception occured when updating price: #{current_exception}"
+  end
+
   def perform
     robot = RobotService.new
 
