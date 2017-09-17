@@ -126,8 +126,8 @@ class PaymiumService
 
   def orders_text(orders)
     orders.map do |order|
-      "#{order[:creted_at]} #{order[:uuid]}: #{order[:direction]} #{order[:amount].to_f.round(3)} #{order[:state]}"
-    end.join("\n")
+      "#{order[:created_at]} #{order[:uuid]}: #{order[:direction]} #{order[:amount].to_f.round(3)} #{order[:state]}"
+    end.map("\n")
   end
 
 
