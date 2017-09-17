@@ -1,5 +1,5 @@
 # config valid only for current version of Capistrano
-lock "3.9.1"
+lock "3.8.2"
 
 set :application, "trader"
 set :repo_url, "git@github.com:Pierre-Michard/trader.git"
