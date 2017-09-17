@@ -12,10 +12,16 @@ class Trade < ApplicationRecord
   aasm :requires_lock => true do
     state :created, :inital => true
     state :kraken_order_placed,     before_enter: :place_counterpart_order
+    state :ignored
     state :closed,                  before_enter: :set_kraken_info
     state :failed
 
     event :place_kraken_order do
+
+      transitions :from => :created,
+                  :to => :ignored,
+                  :guard => [:amount_too_low?]
+
       transitions :from => :created,
                   :to => :kraken_order_placed
     end
@@ -34,6 +40,10 @@ class Trade < ApplicationRecord
 
   after_commit on: :create do
     place_kraken_order! if may_place_kraken_order?
+  end
+
+  def amount_too_low?
+    btc_amount.abs < 0.002
   end
 
   def place_counterpart_order
