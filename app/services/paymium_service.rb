@@ -125,9 +125,10 @@ class PaymiumService
 
 
   def orders_text(orders)
-    orders.map do |order|
+    str = orders.map do |order|
       "#{order[:created_at]} #{order[:uuid]}: #{order[:direction]} #{order[:amount].to_f.round(3)} #{order[:state]}"
-    end.map("\n")
+    end
+    str.join("\n")
   end
 
 
