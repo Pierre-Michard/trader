@@ -145,7 +145,9 @@ class PaymiumService
         amount: btc_amount,
         price: price.round(2)
     })
+    Rails.logger.info(">>>> current orders before #{current_orders.inspect}")
     Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: 60.seconds)
+    Rails.logger.info(">>>> current orders after #{current_orders.inspect}")
   end
 
   def sdepth(force: false)
