@@ -134,7 +134,6 @@ class PaymiumService
 
 
   def cancel_order(order)
-    Rails.cache.delete(:paymium_user)
     Rails.logger.info "cancel order #{order['uuid']}"
     client.delete("user/orders/#{order['uuid']}/cancel")
     Rails.cache.write(:current_orders, current_orders.select{|o| o['uuid'] != order['uuid']}, expires_in: CURRENT_ORDERS_CACHE_DELAY)
@@ -147,7 +146,6 @@ class PaymiumService
   end
 
   def place_limit_order(direction:, btc_amount:, price:)
-    Rails.cache.delete(:paymium_user)
     res = client.post('user/orders', {
         type: 'LimitOrder',
         currency: 'EUR',
