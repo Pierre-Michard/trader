@@ -157,7 +157,7 @@ class PaymiumService
   end
 
   def sdepth(force: false)
-    Rails.cache.fetch(:paymium_sdepth, expires_in: 60.seconds, force: force) do
+    Rails.cache.fetch(:paymium_sdepth, expires_in: 10.seconds, force: force) do
       res = client.get('data/eur/depth').with_indifferent_access
       res[:bids] = res[:bids].reverse
       res
@@ -199,10 +199,10 @@ class PaymiumService
     first_ask = asks.first
     if (!first_bid[:mine] && new_sdepth[:bids].first[:amount] != first_bid[:amount]) ||
         (!first_ask[:mine] && new_sdepth[:asks].first[:amount] != first_ask[:amount])
-      MonitorPriceJob.perform_later unless Resque.size('trader_production_trader') > 2
+      #MonitorPriceJob.perform_later unless Resque.size('trader_production_trader') > 2
     end
 
-    Rails.cache.write(:paymium_sdepth, new_sdepth, expires_in: 60.seconds)
+    Rails.cache.write(:paymium_sdepth, new_sdepth, expires_in: 10.seconds)
   end
 
   def bids
