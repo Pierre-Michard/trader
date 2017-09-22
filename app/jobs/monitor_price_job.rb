@@ -9,7 +9,6 @@ class MonitorPriceJob < ApplicationJob
     robot = RobotService.new
 
     robot.monitor_trades
-    #PaymiumService.instance.current_orders(force_fetch:true)
     begin
       robot.monitor_price(direction: :sell)
       robot.monitor_price(direction: :buy)

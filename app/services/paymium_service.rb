@@ -4,6 +4,7 @@ class PaymiumService
   include Singleton
 
   CONFIG = YAML.load(File.read(Rails.root.join('config', 'secret', 'paymium.yml'))).with_indifferent_access
+  CURRENT_ORDERS_CACHE_DELAY = 5.seconds
 
   attr_reader :client
 
@@ -57,7 +58,7 @@ class PaymiumService
   end
 
   def current_orders(force_fetch: false)
-    Rails.cache.fetch(:current_orders, expires_in: 60.seconds, force: force_fetch) do
+    Rails.cache.fetch(:current_orders, expires_in: CURRENT_ORDERS_CACHE_DELAY, force: force_fetch) do
       client.get('user/orders', {'types[]': 'LimitOrder', active: true}).map{|o| o.with_indifferent_access}
     end
   end
@@ -134,11 +135,9 @@ class PaymiumService
 
   def cancel_order(order)
     Rails.cache.delete(:paymium_user)
-    Rails.logger.info(">>>> current orders before delete #{current_orders_descr}")
     Rails.logger.info "cancel order #{order['uuid']}"
     client.delete("user/orders/#{order['uuid']}/cancel")
-    Rails.cache.write(:current_orders, current_orders.select{|o| o['uuid'] != order['uuid']}, expires_in: 60.seconds)
-    Rails.logger.info(">>>> current orders after delete #{current_orders_descr}")
+    Rails.cache.write(:current_orders, current_orders.select{|o| o['uuid'] != order['uuid']}, expires_in: CURRENT_ORDERS_CACHE_DELAY)
   end
 
   def cancel_all_orders
@@ -156,9 +155,7 @@ class PaymiumService
         amount: btc_amount,
         price: price.round(2)
     })
-    Rails.logger.info(">>>> current orders before create #{current_orders_descr}")
-    Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: 60.seconds)
-    Rails.logger.info(">>>> current orders after create #{current_orders_descr}")
+    Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: CURRENT_ORDERS_CACHE_DELAY)
   end
 
   def sdepth(force: false)
@@ -204,7 +201,7 @@ class PaymiumService
     first_ask = asks.first
     if (!first_bid[:mine] && new_sdepth[:bids].first[:amount] != first_bid[:amount]) ||
         (!first_ask[:mine] && new_sdepth[:asks].first[:amount] != first_ask[:amount])
-      ###MonitorPriceJob.perform_later
+      MonitorPriceJob.perform_later unless Resque.size('trader_production_trader') > 2
     end
 
     Rails.cache.write(:paymium_sdepth, new_sdepth, expires_in: 60.seconds)
