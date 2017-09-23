@@ -13,7 +13,7 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     MonitorTradesJob.perform_later unless Resque.size('trader_production_trader') > 2
   end
 
-  s.every '10s' do
+  s.every '30s' do
     RefreshPaymiumInfo.perform_later
   end
 
