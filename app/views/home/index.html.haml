@@ -97,5 +97,5 @@
         %td= trade.btc_amount
         %td= trade.kraken_price
         %td= trade.paymium_price
-        %td= trade.eur_margin.round(2)
-        %td= trade.percent_margin.round(2)
+        %td= trade.eur_margin.try(:round, 2)
+        %td= trade.percent_margin.try(:round, 2)
