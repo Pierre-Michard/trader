@@ -8,12 +8,15 @@
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
     = navbar static: :top do
-      = navbar_header brand: fa_icon('line-chart'), brand_link: '/'
+      = navbar_header brand: fa_icon('line-chart', class: 'fa-2x', text: 'trader'), brand_link: '/'
       = navbar_collapse do
         = navbar_group class: 'my_menu', id: 'menu' do
           = navbar_item fa_icon('home', class: 'fa-2x', text: 'home'), root_path
           = navbar_item fa_icon('book', class: 'fa-2x', text: 'PM order book'), paymium_service_sdepth_path
           = navbar_item fa_icon('clock-o', class: 'fa-2x', text: 'resque'), '/resque'
+          = navbar_item fa_icon('line-chart', class: 'fa-2x', text: 'kraken chart'), 'https://bitcoinwisdom.com/markets/kraken/btceur'
+          = navbar_item fa_icon('line-chart', class: 'fa-2x', text: 'paymium advance'), 'https://advance.paymium.com/#/en/Paymium/eur/trading'
+
 
     .container
       = yield
