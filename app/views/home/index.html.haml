@@ -1,0 +1,101 @@
+%h2 Marge
+%table.table
+  %thead
+    %tr
+      %th direction
+      %th presure
+      %th marge
+      %th actual marge
+      %th amount
+  %tbody
+    %tr
+      %td sell
+      %td= @robot.sell_presure.round(2)
+      %td= (@robot.sell_marge * 100).round(2)
+      %td= (((@stat.paymium_best_ask - @stat.kraken_best_bid)/@stat.price)*100).round(2)
+      %td= @robot.sell_capacity.round(3)
+    %tr
+      %td buy
+      %td= @robot.buy_presure.round(2)
+      %td= (@robot.buy_marge * 100).round(2)
+      %td= (((-@stat.paymium_best_bid + @stat.kraken_best_ask)/@stat.price)*100).round(2)
+      %td= @robot.buy_capacity.round(3)
+%h2 Balances
+%table.table
+  %thead
+    %tr
+      %th exchange
+      %th currency
+      %th btc
+      %th eur
+  %tbody
+    %tr
+      %td Paymium
+      %td eur
+      %td= (@stat.paymium_eur_balance / @stat.price).round(2)
+      %td{:bgcolor => "#CCFFCC"}= @stat.paymium_eur_balance.round(2)
+    %tr
+      %td Kraken
+      %td btc
+      %td{:bgcolor => "#CCFFCC"}= @stat.kraken_btc_balance.round(2)
+      %td= (@stat.kraken_btc_balance * @stat.price).round(2)
+    %tr
+      %td Paymium
+      %td btc
+      %td{:bgcolor => "#CCFFCC"}= @stat.paymium_btc_balance.round(2)
+      %td= (@stat.paymium_btc_balance * @stat.price).round(2)
+    %tr
+      %td Kraken
+      %td eur
+      %td= (@stat.kraken_eur_balance / @stat.price).round(2)
+      %td{:bgcolor => "#CCFFCC"}= @stat.kraken_eur_balance.round(2)
+    %tr
+      %td Total
+      %td eur
+      %td= ((@stat.kraken_eur_balance + @stat.paymium_eur_balance)/ @stat.price).round(2)
+      %td{:bgcolor => "#CCFFCC"}= (@stat.kraken_eur_balance + @stat.paymium_eur_balance).round(2)
+    %tr
+      %td Total
+      %td btc
+      %td{:bgcolor => "#CCFFCC"}= (@stat.kraken_btc_balance + @stat.paymium_btc_balance).round(2)
+      %td= ((@stat.kraken_btc_balance + @stat.paymium_btc_balance)*@stat.price).round(2)
+    %tr
+      %td Total
+      %td total
+      %td= (@stat.total_virtual_btc).round(2)
+      %td= (@stat.total_virtual_eur).round(2)
+    %tr
+      %td Kraken - Paymium
+      %td total
+      %td= (@stat.total_kraken_virtual_btc - @stat.total_paymium_virtual_btc).round(2)
+      %td= (@stat.total_kraken_virtual_eur - @stat.total_paymium_virtual_eur).round(2)
+    %tr
+      %td Btc - Eur
+      %td total
+      %td= (@stat.total_btc - @stat.total_eur/@stat.price).round(2)
+      %td= (@stat.total_btc*@stat.price - @stat.total_eur).round(2)
+%h2 Trade volume
+= column_chart Trade.group_by_day(:created_at).sum('ABS(btc_amount)')
+%h2 Wins
+= column_chart Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost - kraken_fee')
+%h2 Latest trades
+%table
+  %thead
+    %tr
+      %th Created at
+      %th State
+      %th BTC amount
+      %th Kraken price
+      %th Paymium price
+      %th Eur margin
+      %th percent margin
+  %tbody
+    - @trades.each do |trade|
+      %tr
+        %td= trade.created_at
+        %td= trade.aasm_state
+        %td= trade.btc_amount
+        %td= trade.kraken_price
+        %td= trade.paymium_price
+        %td= trade.eur_margin
+        %td= trade.percent_margin

@@ -51,7 +51,7 @@ namespace :app do
   desc "Create a restart script"
   task :create_restart_script do
     on roles(:web) do |host|
-      file_path = '/etc/cron.daily/restart_trader_services'
+      file_path = '/etc/cron.hourly/restart_trader_services'
 
       file_content = "#!/bin/sh\n"
       file_content += SERVICES.

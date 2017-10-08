@@ -1,0 +1,23 @@
+= form_for(user) do |f|
+  - if user.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(user.errors.count, "error")
+        prohibited this user from being saved:
+      %ul
+        - user.errors.full_messages.each do |message|
+          %li= message
+  .field
+    = f.label :paymium_secret
+    = f.text_field :paymium_secret
+  .field
+    = f.label :paymium_token
+    = f.text_field :paymium_token
+  .field
+    = f.label :kraken_secret
+    = f.text_field :kraken_secret
+  .field
+    = f.label :kraken_token
+    = f.text_field :kraken_token
+  .actions
+    = f.submit

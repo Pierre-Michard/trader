@@ -1,0 +1,30 @@
+%h1 PaymiumService#sdepth
+%div{:style => "width:90%"}
+  %div{:style => "width:45%; float:left;"}
+    %h2 Bids
+    %table.table.table-striped
+      %thead
+        %tr
+          %th price
+          %th amount
+          %th mine
+      %tbody
+        - @bids.each do |bid|
+          %tr{class: (bid[:mine])?'success': ''}
+            %td= bid[:price]
+            %td= bid[:amount]
+            %td= bid[:mine]
+  %div{:style => "width:45%; float:right;"}
+    %h2 Asks
+    %table.table.table-striped
+      %thead
+        %tr
+          %th price
+          %th amount
+          %th mine
+      %tbody
+        - @asks.each do |bid|
+          %tr{class: (bid[:mine])?'success': ''}
+            %td= bid[:price]
+            %td= bid[:amount]
+            %td= bid[:mine]

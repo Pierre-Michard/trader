@@ -57,6 +57,13 @@ gem 'activejob-retriable', github: 'SimplyBuilt/activejob-retriable'
 gem 'sinatra', github: 'sinatra/sinatra', require: false
 
 
+gem 'jquery-rails'
+gem 'bootstrap-sass'
+gem 'rails_bootstrap_navbar'
+gem 'autoprefixer-rails'
+gem 'haml-rails', '~> 1.0'
+gem 'font-awesome-rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri

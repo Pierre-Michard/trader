@@ -1,0 +1,16 @@
+%p#notice= notice
+%p
+  %strong Paymium secret:
+  = @user.paymium_secret
+%p
+  %strong Paymium token:
+  = @user.paymium_token
+%p
+  %strong Kraken secret:
+  = @user.kraken_secret
+%p
+  %strong Kraken token:
+  = @user.kraken_token
+= link_to 'Edit', edit_user_path(@user)
+|
+= link_to 'Back', users_path
