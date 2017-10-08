@@ -79,7 +79,7 @@
 %h2 Wins
 = column_chart Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost - kraken_fee')
 %h2 Latest trades
-%table
+%table.table.table-striped
   %thead
     %tr
       %th Created at
