@@ -11,8 +11,8 @@
       = navbar_header brand: fa_icon('line-chart'), brand_link: '/'
       = navbar_collapse do
         = navbar_group class: 'my_menu', id: 'menu' do
-          = navbar_item fa_icon('home', class: 'fa-2x', text: 'home'), root_url
-          = navbar_item fa_icon('book', class: 'fa-2x', text: 'PM order book'), paymium_service_sdepth_url
+          = navbar_item fa_icon('home', class: 'fa-2x', text: 'home'), root_path
+          = navbar_item fa_icon('book', class: 'fa-2x', text: 'PM order book'), paymium_service_sdepth_path
           = navbar_item fa_icon('clock-o', class: 'fa-2x', text: 'resque'), '/resque'
 
     .container

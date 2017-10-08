@@ -29,35 +29,48 @@
       %th btc
       %th eur
   %tbody
-    %tr
+    %tr.info
       %td Paymium
       %td eur
       %td= (@stat.paymium_eur_balance / @stat.price).round(2)
-      %td{:bgcolor => "#CCFFCC"}= @stat.paymium_eur_balance.round(2)
-    %tr
+      %td
+        %span= @stat.paymium_eur_balance.round(2)
+        %span.fa.fa-euro
+    %tr.warning
       %td Kraken
       %td btc
-      %td{:bgcolor => "#CCFFCC"}= @stat.kraken_btc_balance.round(2)
+      %td
+        %span= @stat.kraken_btc_balance.round(2)
+        %span.fa.fa-btc
       %td= (@stat.kraken_btc_balance * @stat.price).round(2)
-    %tr
+    %tr.warning
       %td Paymium
       %td btc
-      %td{:bgcolor => "#CCFFCC"}= @stat.paymium_btc_balance.round(2)
+      %td
+        %span= @stat.paymium_btc_balance.round(2)
+        %span.fa.fa-btc
       %td= (@stat.paymium_btc_balance * @stat.price).round(2)
-    %tr
+    %tr.info
       %td Kraken
       %td eur
       %td= (@stat.kraken_eur_balance / @stat.price).round(2)
-      %td{:bgcolor => "#CCFFCC"}= @stat.kraken_eur_balance.round(2)
-    %tr
+      %td
+        %span= @stat.kraken_eur_balance.round(2)
+        %span.fa.fa-euro
+    %tr.info
       %td Total
       %td eur
       %td= ((@stat.kraken_eur_balance + @stat.paymium_eur_balance)/ @stat.price).round(2)
-      %td{:bgcolor => "#CCFFCC"}= (@stat.kraken_eur_balance + @stat.paymium_eur_balance).round(2)
-    %tr
+      %td
+        %span= (@stat.kraken_eur_balance + @stat.paymium_eur_balance).round(2)
+        %span.fa.fa-euro
+    %tr.warning
       %td Total
       %td btc
-      %td{:bgcolor => "#CCFFCC"}= (@stat.kraken_btc_balance + @stat.paymium_btc_balance).round(2)
+
+      %td
+        %span= (@stat.kraken_btc_balance + @stat.paymium_btc_balance).round(2)
+        %span.fa.fa-btc
       %td= ((@stat.kraken_btc_balance + @stat.paymium_btc_balance)*@stat.price).round(2)
     %tr
       %td Total
