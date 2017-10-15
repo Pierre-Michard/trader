@@ -1,4 +1,4 @@
-web: bundle exec rails server -p $PORT
+#web: bundle exec rails server -p $PORT
 paymium_private_node: nodejs node/paymium_private.js
 kraken_public_node: nodejs node/kraken_public.js
 jobs: bundle exec rake sneakers:run

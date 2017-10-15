@@ -6,6 +6,8 @@
     day
   %a.btn.btn-info{href: trades_graph_path(period: 'week'), class: [(@period == 'week') && 'active' ]}
     week
+  %a.btn.btn-info{href: trades_graph_path(period: 'month'), class: [(@period == 'month') && 'active' ]}
+    month
 
 %h2 Trades
 = line_chart [{name: 'volume (*10)', data: @volume.map {|date, value| [date, value*10]}},{name:'gains', data: @wins}]
