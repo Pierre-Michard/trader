@@ -1,0 +1,23 @@
+%h2 Latest trades
+%table.table.table-striped
+  %thead
+    %tr
+      %th Created at
+      %th State
+      %th BTC amount
+      %th Kraken price
+      %th Paymium price
+      %th Eur margin
+      %th percent margin
+  %tbody
+    - @trades.each do |trade|
+      %tr
+        %td= trade.created_at
+        %td= trade.aasm_state
+        %td= trade.btc_amount
+        %td= trade.kraken_price
+        %td= trade.paymium_price
+        %td= trade.eur_margin.try(:round, 2)
+        %td= trade.percent_margin.try(:round, 2)
+
+= will_paginate @trades

@@ -5,3 +5,8 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+Trade.create(btc_amount: 1,
+             paymium_uuid: 'test',
+             paymium_cost: 1000,
+             paymium_price: 1000,
+             paymium_order_uuid: 'test')

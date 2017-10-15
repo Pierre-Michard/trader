@@ -13,9 +13,18 @@
         = navbar_group class: 'my_menu', id: 'menu' do
           = navbar_item fa_icon('home', class: 'fa-2x', text: 'home'), root_path
           = navbar_item fa_icon('book', class: 'fa-2x', text: 'PM order book'), paymium_service_sdepth_path
+          = navbar_dropdown fa_icon('bank', class: 'fa-2x', text: 'trades') do
+            = navbar_item fa_icon('bars', class: 'fa-2x', text: 'lastest trades'), trades_path
+
           = navbar_item fa_icon('clock-o', class: 'fa-2x', text: 'resque'), '/resque'
-          = navbar_item fa_icon('line-chart', class: 'fa-2x', text: 'kraken chart'), 'https://bitcoinwisdom.com/markets/kraken/btceur'
-          = navbar_item fa_icon('line-chart', class: 'fa-2x', text: 'paymium advance'), 'https://advance.paymium.com/#/en/Paymium/eur/trading'
+
+          = navbar_dropdown fa_icon('bar-chart', class: 'fa-2x', text: 'markets') do
+            = navbar_item 'https://bitcoinwisdom.com/markets/kraken/btceur' do
+              %img{src: '/pictures/kraken.jpg', height: '30'}
+              kraken
+            = navbar_item 'https://advance.paymium.com/#/en/Paymium/eur/trading' do
+              %img{src: '/pictures/paymium.jpg', height: '30'}
+              paymium
 
 
     .container
