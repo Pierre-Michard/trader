@@ -8,4 +8,4 @@
     week
 
 %h2 Trades
-= line_chart [{name: 'volume', data: @volume},{name:'gains', data: @wins}]
+= line_chart [{name: 'volume (*10)', data: @volume.map {|date, value| [date, value*10]}},{name:'gains', data: @wins}]
