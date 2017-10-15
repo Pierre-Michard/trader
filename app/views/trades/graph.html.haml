@@ -1,0 +1,11 @@
+
+.btn_group
+  %a.btn.btn-info{href: trades_graph_path(period: 'hour'), class: [(@period == 'hour') && 'active' ]}
+    hour
+  %a.btn.btn-info{href: trades_graph_path(period: 'day'),  class: [(@period == 'day')  && 'active' ]}
+    day
+  %a.btn.btn-info{href: trades_graph_path(period: 'week'), class: [(@period == 'week') && 'active' ]}
+    week
+
+%h2 Trades
+= line_chart [{name: 'volume', data: @volume},{name:'gains', data: @wins}]
