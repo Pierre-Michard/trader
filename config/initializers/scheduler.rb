@@ -21,8 +21,5 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     RefreshKrakenAccountJob.perform_later unless Resque.size('trader_production_refresh_data') > 2
   end
 
-  s.every '1h' do
-    Stat.create!
-  end
 
 end
