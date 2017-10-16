@@ -91,5 +91,5 @@
 = column_chart Trade.group_by_day(:created_at).sum('ABS(btc_amount)')
 %h2 Wins
 = column_chart Trade.group_by_day(:created_at).sum('paymium_cost + kraken_cost - kraken_fee')
-%h2 Latest trades
+
 = render partial: 'trades/index', object: @trades

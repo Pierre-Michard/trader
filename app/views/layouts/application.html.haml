@@ -16,7 +16,9 @@
           = navbar_dropdown fa_icon('bank', class: 'fa-2x', text: 'trades') do
             = navbar_item fa_icon('bars', class: 'fa-2x', text: 'lastest trades'), trades_path
             = navbar_item fa_icon('bar-chart', class: 'fa-2x', text: 'graph'), trades_graph_path
-
+          = navbar_dropdown fa_icon('calculator', class: 'fa-2x', text: 'stats') do
+            = navbar_item fa_icon('bar-chart', class: 'fa-2x', text: 'balances'), stats_balance_path
+            = navbar_item fa_icon('bar-chart', class: 'fa-2x', text: 'marges'), stats_marge_path
 
           = navbar_item fa_icon('clock-o', class: 'fa-2x', text: 'resque'), '/resque'
 

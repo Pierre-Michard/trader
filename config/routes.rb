@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   get 'trades/graph'
 
 
+  get 'stats/balance'
+  get 'stats/marge'
+
+
   root to: "home#index"
   mount Resque::Server.new, :at => "/resque"
 end

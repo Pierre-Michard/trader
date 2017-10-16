@@ -1,5 +1,6 @@
+%h2 Trades
 
-.btn_group
+.btn-group{role: 'group'}
   %a.btn.btn-info{href: trades_graph_path(period: 'hour'), class: [(@period == 'hour') && 'active' ]}
     hour
   %a.btn.btn-info{href: trades_graph_path(period: 'day'),  class: [(@period == 'day')  && 'active' ]}
@@ -9,5 +10,4 @@
   %a.btn.btn-info{href: trades_graph_path(period: 'month'), class: [(@period == 'month') && 'active' ]}
     month
 
-%h2 Trades
 = line_chart [{name: 'volume (*10)', data: @volume.map {|date, value| [date, value*10]}},{name:'gains', data: @wins}]

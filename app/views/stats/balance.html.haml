@@ -1,0 +1,17 @@
+%h2 balances
+
+.btn-group{role: 'group'}
+  %a.btn.btn-info{href: stats_balance_path(period: 'hour'), class: [(@period == 'hour') && 'active' ]}
+    hour
+  %a.btn.btn-info{href: stats_balance_path(period: 'day'),  class: [(@period == 'day')  && 'active' ]}
+    day
+  %a.btn.btn-info{href: stats_balance_path(period: 'week'), class: [(@period == 'week') && 'active' ]}
+    week
+  %a.btn.btn-info{href: stats_balance_path(period: 'month'), class: [(@period == 'month') && 'active' ]}
+    month
+
+%h3 btc balance
+= line_chart @btc_balance
+
+%h3 eur balance
+= line_chart @eur_balance
