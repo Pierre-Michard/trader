@@ -30,9 +30,9 @@ class StatsController < ApplicationController
      end
     @buy_marge  = @stats.average('(paymium_best_bid - kraken_best_ask) / price')
     @sell_marge = @stats.average('(paymium_best_ask - kraken_best_bid) / price')
-    @paymium_best_bid  = @stats.average('paymium_best_bid')
-    @paymium_best_ask  = @stats.average('paymium_best_ask')
-    @kraken_best_ask  = @stats.average('kraken_best_ask')
-    @kraken_best_bid  = @stats.average('kraken_best_bid')
+    @paymium_best_bid  = @stats.average('paymium_best_bid - kraken_best_ask')
+    @paymium_best_ask  = @stats.average('paymium_best_ask - kraken_best_ask')
+    @kraken_best_ask  = @stats.average('kraken_best_ask - kraken_best_ask')
+    @kraken_best_bid  = @stats.average('kraken_best_bid - kraken_best_ask')
   end
 end
