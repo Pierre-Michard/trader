@@ -3,6 +3,8 @@ class Trade < ApplicationRecord
 
   attr_accessor :kraken_remote_order
 
+  scope :missed_orders, -> { where(created_at: 1.minutes.ago..30.minutes.ago, aasm_state: :created)}
+
   validates :btc_amount,          presence: true
   validates :paymium_uuid,        presence: true
   validates :paymium_cost,        presence: true
@@ -126,6 +128,37 @@ class Trade < ApplicationRecord
       rescue => e
         Rails.logger.error("#{e.class} raised when setting kraken info for order #{kraken_uuids}")
       end
+    end
+  end
+
+  def fix_order!
+    key, value = self.class.recent_unmatched_orders
+                  .detect do |_key, value|
+                    ((BigDecimal(value.vol) == btc_amount.abs) &&
+                     (value.descr.type == (btc_amount > 0) ? 'sell':'buy' ))
+    end
+
+    if key.nil?
+      place_kraken_order!
+    else
+      update_attributes(aasm_state: :kraken_order_placed, kraken_uuid: key)
+      @kraken_remote_order = value
+      close!
+    end
+  end
+
+  def self.recent_unmatched_orders
+    @recent_unmatched_orders ||= begin
+      recent_orders = KrakenService.instance.recent_orders
+      matched_keys = self.where(kraken_uuid: recent_orders.keys).select(:kraken_uuid)
+      recent_orders.reject{|key, value| matched_keys.include? key}
+    end
+  end
+
+  def self.fix_missed_orders!
+    @recent_unmatched_orders = nil
+    missed_orders.find_each do |t|
+      t.fix_order!
     end
   end
 

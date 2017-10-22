@@ -37,6 +37,14 @@ class KrakenService
     end
   end
 
+  def closed_orders
+    client.private.closed_orders.closed
+  end
+
+  def recent_orders
+    open_orders.merge(closed_orders)
+  end
+
   def cache_open_order(order)
     cached_orders = Rails.cache.read(:kraken_open_orders)
     if cached_orders
