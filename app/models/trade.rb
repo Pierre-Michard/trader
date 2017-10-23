@@ -3,7 +3,7 @@ class Trade < ApplicationRecord
 
   attr_accessor :kraken_remote_order
 
-  scope :missed_orders, -> { where(created_at: 1.minutes.ago..30.minutes.ago, aasm_state: :created)}
+  scope :missed_orders, -> { where(created_at: 30.minutes.ago..1.minute.ago, aasm_state: :created)}
 
   validates :btc_amount,          presence: true
   validates :paymium_uuid,        presence: true
