@@ -151,7 +151,9 @@ class Trade < ApplicationRecord
     @recent_unmatched_orders ||= begin
       recent_orders = KrakenService.instance.recent_orders
       matched_keys = self.where(kraken_uuid: recent_orders.keys).select(:kraken_uuid)
-      recent_orders.reject{|key, value| matched_keys.include? key}
+      recent_orders
+          .reject{|key, value| matched_keys.include? key}
+          .reject{|key, value| Time.at(value.opentm) < 1.day.ago || value.descr.ordertype != 'market'}
     end
   end
 
