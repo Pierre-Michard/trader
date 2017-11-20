@@ -5,7 +5,7 @@ class KrakenTradesService
   def self.list(limit = STORE_LIMIT)
     $redis.lrange(KEY, 0, limit-1).map do |raw_trade|
       trade = JSON.parse(raw_trade).with_indifferent_access
-      trade[:date] = Time.at(trade[:date])
+      trade[:date] = Time.at(trade[:timestamp].to_i)
       trade
     end
   end

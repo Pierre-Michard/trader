@@ -11,7 +11,7 @@ class KrakenSdepthService
     unless sdepth[:now] > 1.minutes.ago
       raise OutdatedData.new 'no recent sdepth available'
     end
-    sdepth
+    sdepth[:sdepth]
   end
 
   def self.set(sdepth)
@@ -19,21 +19,11 @@ class KrakenSdepthService
   end
 
   def self.asks
-    asks = get[:return][:asks]
-    if asks
-      asks.map{|ask| {price: ask[0], amount: ask[1]}}
-    else
-      []
-    end
+    get[:asks]
   end
 
   def self.bids
-    bids = get[:return][:bids]
-    if bids
-      bids.map{|bid| {price: bid[0], amount: bid[1]}}
-    else
-      []
-    end
+    get[:bids]
   end
 
   def self.bids_price(btc_amount = 1)

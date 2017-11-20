@@ -1,5 +1,6 @@
-var util = require('util');
-const WebSocket = require('ws');
+const KryptoSocket = require('krypto-socket');
+const timestamp = require('unix-timestamp');
+
 var ampq_conn = require('amqplib').connect('amqp://localhost');
 
 var out = 'kraken_public';
@@ -12,38 +13,28 @@ out_queue = ampq_conn.then( (conn) => {
 });
 
 
-function rabbitBroadcast(message) {
-    //console.log(message);
+function rabbitBroadcast(type, content) {
+    let message = {
+        'now' : parseInt(timestamp.now()),
+        'type' : type
+    };
+    message[type] = content;
+
+    console.log(JSON.stringify(message));
     out_queue.then((ch) => {
-        ch.sendToQueue(out, new Buffer(message));
+        ch.sendToQueue(out, new Buffer(JSON.stringify(message)));
     }).catch(console.warn);
 }
 
 console.log('connecting');
 
-var ws = new WebSocket('wss://d2.bitcoinwisdom.com/?symbol=krakenbtceur', {
-    perMessageDeflate: true
-});
+let kryptoSocket = new KryptoSocket(["market:kraken:btceur:orderbook:snapshots", "market:kraken:btceur:trades"]);
 
-ws.onmessage = function(m) {
-    data = JSON.parse(m.data);
-    if((data.trades) || (data.sdepth))
-    {
-        //console.log('Got trades or sdepth: ', JSON.stringify(data));
-        rabbitBroadcast(m.data);
+kryptoSocket.on('message', (message) => {
+    if(message.tradesUpdate) {
+        rabbitBroadcast('trades', message['tradesUpdate']['trades']);
     }
-};
-
-ws.on('open', function open() {
-    console.log('connected');
+    if (message.orderBookUpdate) {
+        rabbitBroadcast('sdepth', message['orderBookUpdate']);
+    }
 });
-
-ws.on('close', function close() {
-    console.log('disconnected');
-});
-
-
-setInterval(()=>{
-    ws.send('ping');
-}, 5000);
-

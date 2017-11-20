@@ -11,7 +11,7 @@ class KrakenPublicWorker
         #Sneakers::logger.info "received trade #{KrakenTradesService.list.last}"
       end
     when 'sdepth'
-      KrakenSdepthService.set(event[:sdepth].to_json)
+      KrakenSdepthService.set(event.to_json)
       #Sneakers::logger.info "#{event[:sdepth][:now]}: received sdepth #{KrakenSdepthService.get}"
 
     else

@@ -1,8 +1,7 @@
 class Stat < ApplicationRecord
 
   after_initialize do
-    #self[:price] ||= KrakenTradesService.list[0]['price']
-    self[:price] ||= KrakenSdepthService.bids[0][:price]
+    self[:price] ||= KrakenTradesService.list[0]['price']
     self[:paymium_btc_balance]  ||= PaymiumService.instance.balance_btc + PaymiumService.instance.locked_btc
     self[:paymium_eur_balance]  ||= PaymiumService.instance.balance_eur + PaymiumService.instance.locked_eur
     self[:kraken_eur_balance]   ||= KrakenService.instance.balance_eur
