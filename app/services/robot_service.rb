@@ -1,5 +1,5 @@
 class RobotService
-  MIN_TRADE_AMOUNT= 0.001
+  MIN_TRADE_AMOUNT= 0.002
   MAX_TRADE_AMOUNT= 0.8
 
   def initialize
