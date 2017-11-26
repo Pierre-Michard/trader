@@ -1,40 +1,49 @@
 const KryptoSocket = require('krypto-socket');
 const timestamp = require('unix-timestamp');
 
-var ampq_conn = require('amqplib').connect('amqp://localhost');
 
-var out = 'kraken_public';
+class kryptoToRabbit{
+    constructor(rabbitChannelName, kryptoChannels) {
+        this.rabbitChannelName = rabbitChannelName;
+        this.rabbit = this.rabbitChannel( rabbitChannelName);
+        let kryptoSocket = new KryptoSocket(kryptoChannels);
 
-out_queue = ampq_conn.then( (conn) => {
-    return conn.createChannel();
-}).then((ch) => {
-    ch.assertQueue(out, {durable: true});
-    return ch;
-});
+        kryptoSocket.on('message', (message) => {
+            if (message.tradesUpdate) {
+                this.rabbitBroadcast('trades', message['tradesUpdate']['trades']);
+            }
+            if (message.orderBookUpdate) {
+                this.rabbitBroadcast('sdepth', message['orderBookUpdate']);
+            }
+        });
+    }
 
+    rabbitChannel(channelName){
+        return this.rabbitConn().then( (conn) => {
+                return conn.createChannel();
+            }).then((ch) => {
+                ch.assertQueue(channelName, {durable: true});
+                return ch;
+            });
+    }
 
-function rabbitBroadcast(type, content) {
-    let message = {
-        'now' : parseInt(timestamp.now()),
-        'type' : type
-    };
-    message[type] = content;
+    rabbitConn(){
+        return require('amqplib').connect('amqp://localhost');
+    }
 
-    console.log(JSON.stringify(message));
-    out_queue.then((ch) => {
-        ch.sendToQueue(out, new Buffer(JSON.stringify(message)));
-    }).catch(console.warn);
+    rabbitBroadcast(type, content) {
+        let message = {
+            'now' : parseInt(timestamp.now()),
+            'type' : type
+        };
+        message[type] = content;
+
+        console.log(JSON.stringify(message));
+        this.rabbit.then((ch) => {
+            ch.sendToQueue(this.rabbitChannelName, new Buffer(JSON.stringify(message)));
+        }).catch(console.warn);
+    }
 }
 
-console.log('connecting');
-
-let kryptoSocket = new KryptoSocket(["market:kraken:btceur:orderbook:snapshots", "market:kraken:btceur:trades"]);
-
-kryptoSocket.on('message', (message) => {
-    if(message.tradesUpdate) {
-        rabbitBroadcast('trades', message['tradesUpdate']['trades']);
-    }
-    if (message.orderBookUpdate) {
-        rabbitBroadcast('sdepth', message['orderBookUpdate']);
-    }
-});
+new kryptoToRabbit('kraken_public', ["market:kraken:btceur:orderbook:snapshots", "market:kraken:btceur:trades"]);
+//new kryptoToRabbit('gdax_public', ["market:gdax:btceur:orderbook:snapshots"]);

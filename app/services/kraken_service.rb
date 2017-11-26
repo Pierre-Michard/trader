@@ -2,6 +2,8 @@ require 'singleton'
 
 class KrakenService
   include Singleton
+  include WithPublicTrades
+  include WithSdepth
 
   CACHE_EXPIRATION_DELAY=61.seconds
 
@@ -145,7 +147,7 @@ class KrakenService
     def buy_order_estimated_cost(type:, price:, btc_amount:)
       case type
         when :market
-          - KrakenSdepthService.asks_price(btc_amount) * btc_amount
+          - asks_price(btc_amount) * btc_amount
         when :limit
           - price*btc_amount
         else

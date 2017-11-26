@@ -56,11 +56,11 @@ class RobotService
   end
 
   def kraken_ask_price(volume: MAX_TRADE_AMOUNT)
-    KrakenSdepthService.asks_price(volume)
+    KrakenService.instance.asks_price(volume)
   end
 
   def kraken_bids_price(volume: MAX_TRADE_AMOUNT)
-    KrakenSdepthService.bids_price(volume)
+    KrakenService.instance.bids_price(volume)
   end
 
   def target_sell_price
