@@ -52,6 +52,9 @@ gem 'kraken_client'
 gem 'chartkick'
 gem 'groupdate'
 gem 'activejob-retriable', github: 'SimplyBuilt/activejob-retriable'
+gem 'coinbase-exchange'
+gem 'rails-settings-cached'
+gem 'rails-settings-ui'
 
 
 gem 'sinatra', github: 'sinatra/sinatra', require: false

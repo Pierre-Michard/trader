@@ -13,20 +13,20 @@ class RobotService
     PaymiumService.instance.balance_eur + PaymiumService.instance.locked_eur
   end
 
-  def kraken_eur_balance
-    @kraken_eur_balance ||=KrakenService.instance.balance_eur
+  def counterpart_eur_balance
+    @counterpart_eur_balance ||=Setting.counter_orders_service.balance_eur
   end
 
-  def kraken_btc_balance
-    @kraken_btc_balance ||= KrakenService.instance.balance_btc
+  def counterpart_btc_balance
+    @counterpart_btc_balance ||= Setting.counter_orders_service.balance_btc
   end
 
   def sell_capacity
-    [paymium_btc_balance, (kraken_eur_balance/kraken_ask_price)].min
+    [paymium_btc_balance, (counterpart_eur_balance/counterpart_ask_price)].min
   end
 
   def buy_capacity
-    [paymium_eur_balance/kraken_bids_price, (kraken_btc_balance)].min
+    [paymium_eur_balance/counterpart_bids_price, (counterpart_btc_balance)].min
   end
 
   def buy_presure
@@ -55,21 +55,21 @@ class RobotService
     @buy_amount ||= [buy_capacity, MAX_TRADE_AMOUNT].min * 0.9
   end
 
-  def kraken_ask_price(volume: MAX_TRADE_AMOUNT)
-    KrakenService.instance.asks_price(volume)
+  def counterpart_ask_price(volume: MAX_TRADE_AMOUNT)
+    Setting.counter_orders_service.asks_price(volume)
   end
 
-  def kraken_bids_price(volume: MAX_TRADE_AMOUNT)
-    KrakenService.instance.bids_price(volume)
+  def counterpart_bids_price(volume: MAX_TRADE_AMOUNT)
+    Setting.counter_orders_service.bids_price(volume)
   end
 
   def target_sell_price
-    next_ask = PaymiumService.instance.highest_stranger_ask(kraken_ask_price * (1 + sell_marge))
+    next_ask = PaymiumService.instance.highest_stranger_ask(counterpart_ask_price * (1 + sell_marge))
     next_ask[:price] - 0.05
   end
 
   def target_buy_price
-    next_ask = PaymiumService.instance.highest_stranger_bid(kraken_bids_price * (1 - buy_marge))
+    next_ask = PaymiumService.instance.highest_stranger_bid(counterpart_bids_price * (1 - buy_marge))
     next_ask[:price] + 0.05
   end
 
@@ -96,7 +96,7 @@ class RobotService
   end
 
   def monitor_price(direction: :buy)
-    @is_kraken_open_order = (@is_kraken_open_order.nil?)? KrakenService.instance.open_orders? : @is_kraken_open_order
+    @is_counterpart_open_order = (@is_counterpart_open_order.nil?)? Setting.counter_orders_service.open_orders? : @is_counterpart_open_order
     logger.info "monitor_#{direction}_price"
     target_price = send("target_#{direction}_price")
     logger.info "target #{direction} price #{target_price.to_f}"
@@ -112,7 +112,7 @@ class RobotService
       end
 
       amount = send("#{direction}_amount")
-      if amount > MIN_TRADE_AMOUNT && !@is_kraken_open_order
+      if amount > MIN_TRADE_AMOUNT && !@is_counterpart_open_order
         logger.info "place Paymium #{direction} order amount: #{amount}, price #{target_price}"
         PaymiumService.instance.place_limit_order(direction: direction, btc_amount: amount, price: target_price)
       end

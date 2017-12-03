@@ -11,8 +11,13 @@
     month
 
 %h3 btc balance
-= line_chart [{name: 'buy_marge', data: @buy_marge},{name:'sell_marge', data: @sell_marge}]
+= line_chart [  {name: 'pk_buy_marge',  data: @pk_buy_marge},
+                {name: 'pk_sell_marge', data: @pk_sell_marge},
+                {name: 'pg_buy_marge',  data: @pg_buy_marge},
+                {name: 'pg_sell_marge', data: @pg_sell_marge},
+                {name: 'kg_buy_marge',  data: @kg_buy_marge},
+                {name: 'kg_sell_marge', data: @kg_sell_marge}]
 
 %h3 bids vs asks
-= line_chart [{name: 'paymium_best_bid', data: @paymium_best_bid},{name:'paymium_best_ask', data: @paymium_best_ask},{name:'kraken_best_ask', data: @kraken_best_ask},{name:'kraken_best_bid', data: @kraken_best_bid}]
+= line_chart [{name: 'paymium_best_bid', data: @paymium_best_bid},{name:'paymium_best_ask', data: @paymium_best_ask},{name:'kraken_best_ask', data: @kraken_best_ask},{name:'kraken_best_bid', data: @kraken_best_bid},{name:'gdax_best_ask', data: @gdax_best_ask},{name:'gdax_best_bid', data: @gdax_best_bid}]
 

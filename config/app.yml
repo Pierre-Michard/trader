@@ -1,0 +1,13 @@
+# config/app.yml for rails-settings-cached
+defaults: &defaults
+  active: true
+  reference_service: kraken
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

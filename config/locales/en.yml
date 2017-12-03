@@ -21,3 +21,12 @@
 
 en:
   hello: "Hello world"
+  settings:
+      attributes:
+        active:
+          name: 'active'
+        reference_service:
+          name: 'Reference service'
+          labels:
+            kraken: 'Kraken'
+            gdax: 'Gdax'

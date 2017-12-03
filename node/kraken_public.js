@@ -38,7 +38,7 @@ class kryptoToRabbit{
         };
         message[type] = content;
 
-        console.log(JSON.stringify(message));
+        console.log(this.rabbitChannelName, JSON.stringify(message));
         this.rabbit.then((ch) => {
             ch.sendToQueue(this.rabbitChannelName, new Buffer(JSON.stringify(message)));
         }).catch(console.warn);
@@ -46,4 +46,4 @@ class kryptoToRabbit{
 }
 
 new kryptoToRabbit('kraken_public', ["market:kraken:btceur:orderbook:snapshots", "market:kraken:btceur:trades"]);
-//new kryptoToRabbit('gdax_public', ["market:gdax:btceur:orderbook:snapshots"]);
+new kryptoToRabbit('gdax_public', ["market:gdax:btceur:orderbook:snapshots", "market:gdax:btceur:trades"]);

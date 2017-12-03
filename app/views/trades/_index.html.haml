@@ -5,7 +5,7 @@
       %th Created at
       %th State
       %th BTC amount
-      %th Kraken price
+      %th Counterpart price
       %th Paymium price
       %th Eur margin
       %th percent margin
@@ -15,7 +15,7 @@
         %td= trade.created_at.localtime
         %td= trade.aasm_state
         %td= trade.btc_amount
-        %td= trade.kraken_price
+        %td= trade.counter_order_price
         %td= trade.paymium_price
         %td= trade.eur_margin.try(:round, 2)
         %td= trade.percent_margin.try(:round, 2)

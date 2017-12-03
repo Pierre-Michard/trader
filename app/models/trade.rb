@@ -1,7 +1,7 @@
 class Trade < ApplicationRecord
   include AASM
 
-  attr_accessor :kraken_remote_order
+  attr_accessor :counterpart_remote_order
 
   scope :missed_orders, -> { where(created_at: 30.minutes.ago..1.minute.ago, aasm_state: :created)}
 
@@ -13,52 +13,52 @@ class Trade < ApplicationRecord
 
   aasm :requires_lock => true do
     state :created, :inital => true
-    state :kraken_order_placed,     before_enter: :place_counterpart_order
+    state :counter_order_placed,     before_enter: :place_counter_order
     state :ignored
-    state :closed,                  before_enter: :set_kraken_info
+    state :closed,                  before_enter: :set_counter_order_info
     state :failed
 
-    event :place_kraken_order do
+    event :place_counter_order do
 
       transitions :from => :created,
                   :to => :ignored,
                   :guard => [:amount_too_low?]
 
       transitions :from => :created,
-                  :to => :kraken_order_placed
+                  :to => :counter_order_placed
     end
 
     event :close do
-      transitions :from => :kraken_order_placed,
+      transitions :from => :counter_order_placed,
                   :to => :closed,
-                  :guard => [:kraken_order_closed?]
+                  :guard => [:counter_order_closed?]
 
-      transitions :from => :kraken_order_placed,
+      transitions :from => :counter_order_placed,
                   :to => :failed,
-                  :guard => [:kraken_order_canceled?]
+                  :guard => [:counter_order_canceled?]
     end
 
   end
 
   after_commit on: :create do
-    place_kraken_order! if may_place_kraken_order?
+    place_counter_order! if may_place_counter_order?
   end
 
   def amount_too_low?
     btc_amount.abs < 0.002
   end
 
-  def place_counterpart_order
-    unless Rails.env.development? or self.kraken_uuid.present?
-      logger.info "place kraken market order #{btc_amount}"
-      self.kraken_uuid = KrakenService.instance.place_order(
+  def place_counter_order
+    unless Rails.env.development? or self.counter_order_uuid.present?
+      logger.info "place counter order #{btc_amount}"
+      self.counter_order_uuid = Setting.counter_orders_service.place_order(
           type: :market,
-          direction:  kraken_direction,
+          direction:  counter_order_direction,
           btc_amount: btc_amount.abs)
     end
   end
 
-  def kraken_direction
+  def counter_order_direction
     (btc_amount > 0)? :sell : :buy
   end
 
@@ -66,46 +66,44 @@ class Trade < ApplicationRecord
     (btc_amount > 0)? :buy : :sell
   end
 
-  def kraken_remote_order
-    return @kraken_remote_order if @kraken_remote_order
-    res = KrakenService.instance.client.private.query_orders(txid: kraken_uuid, trades: true)
-    @kraken_remote_order = res[kraken_uuid]
+  def remote_counter_order
+    @remote_counter_order ||= Setting.counter_orders_service.order(counter_order_uuid)
   end
 
-  def kraken_status
-    kraken_remote_order.status
+  def counter_order_status
+    remote_counter_order[:status]
   end
 
-  def kraken_order_closed?
-    kraken_remote_order.try(:status) == 'closed'
+  def counter_order_closed?
+    remote_counter_order[:status] == :closed
   end
 
-  def kraken_order_canceled?
-    kraken_remote_order.try(:status) == 'canceled'
+  def counter_order_canceled?
+    remote_counter_order[:status] == :canceled
   end
 
-  def set_kraken_info
-    if kraken_order_closed?
-      self.kraken_price = kraken_remote_order.price.to_f
-      self.kraken_fee   = kraken_remote_order.fee.to_f
-      self.kraken_cost  = (kraken_direction == :buy)? - kraken_remote_order.cost.to_f : kraken_remote_order.cost.to_f
+  def set_counterpart_info
+    if counter_order_closed?
+      self.counter_order_price = remote_counter_order[:price]
+      self.counter_order_fee   = remote_counter_order[:fee]
+      self.counter_order_cost  = (counter_order_direction == :buy)? -remote_counter_order[:cost] : remote_counter_order[:cost]
     end
   end
 
   def eur_margin
-    if kraken_cost.present? && paymium_cost.present? && kraken_fee.present?
-      kraken_cost + paymium_cost - kraken_fee
+    if counter_order_cost.present? && paymium_cost.present? && counter_order_fee.present?
+      counter_order_cost + paymium_cost - counter_order_fee
     end
   end
 
   def percent_margin
-    if kraken_price.present? && paymium_price.present?
-      100 * (kraken_price - paymium_price).abs / paymium_price
+    if counter_order_price.present? && paymium_price.present?
+      100 * (counter_order_price - paymium_price).abs / paymium_price
     end
   end
 
-  def set_kraken_info!
-    set_kraken_info
+  def set_counterpart_info!
+    set_counterpart_info
     save!
   end
 
@@ -114,8 +112,8 @@ class Trade < ApplicationRecord
     @paymium_remote_order ||= PaymiumService.instance.order(paymium_order_uuid)
   end
 
-  def self.set_kraken_info
-    Trade.where(kraken_cost: nil).where.not(kraken_uuid: nil).pluck(:kraken_uuid).each_slice(20) do |kraken_uuids|
+  def self.set_counterpart_info
+    Trade.where(counter_order_cost: nil).where.not(counter_order_uuid: nil).pluck(:counter_order_uuid).each_slice(20) do |kraken_uuids|
       begin
         kraken_orders = KrakenService.instance.client.private.query_orders(txid: kraken_uuids.join(','))
         kraken_orders.each do |kraken_uuid, kraken_order|
@@ -142,18 +140,18 @@ class Trade < ApplicationRecord
       place_kraken_order!
     else
       update_attributes(aasm_state: :kraken_order_placed, kraken_uuid: key)
-      @kraken_remote_order = value
+      @counterpart_remote_order = value
       close!
     end
   end
 
   def self.recent_unmatched_orders
     @recent_unmatched_orders ||= begin
-      recent_orders = KrakenService.instance.recent_orders
-      matched_keys = self.where(kraken_uuid: recent_orders.keys).pluck(:kraken_uuid)
+      recent_orders = Setting.counter_orders_service.recent_orders
+      matched_keys = self.where(counter_order_uuid: recent_orders.keys).pluck(:counter_order_uuid)
       recent_orders
           .reject{|key, value| matched_keys.include? key}
-          .reject{|key, value| Time.at(value.opentm) < 1.day.ago || value.descr.ordertype != 'market'}
+          .reject{|key, value| value[:created_at] < 1.day.ago || value[:type] != 'market'}
     end
   end
 
@@ -165,7 +163,7 @@ class Trade < ApplicationRecord
   end
 
   def self.close_orders
-    Trade.where(aasm_state: :kraken_order_placed).find_each do |t|
+    Trade.where(aasm_state: :counter_order_placed).find_each do |t|
       t.close! if t.may_close?
     end
   end

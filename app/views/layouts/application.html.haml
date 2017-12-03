@@ -20,10 +20,12 @@
             = navbar_item fa_icon('bar-chart', class: 'fa-2x', text: 'balances'), stats_balance_path
             = navbar_item fa_icon('bar-chart', class: 'fa-2x', text: 'marges'), stats_marge_path
 
+          = navbar_item fa_icon('cogs', class: 'fa-2x', text: 'settings'), '/settings'#settings_path
+
           = navbar_item fa_icon('clock-o', class: 'fa-2x', text: 'resque'), '/resque'
 
           = navbar_dropdown fa_icon('bar-chart', class: 'fa-2x', text: 'markets') do
-            = navbar_item 'https://bitcoinwisdom.com/markets/kraken/btceur' do
+            = navbar_item 'https://cryptowat.ch/kraken/btceur' do
               %img{src: '/pictures/kraken.jpg', height: '30'}
               kraken
             = navbar_item 'https://advance.paymium.com/#/en/Paymium/eur/trading' do

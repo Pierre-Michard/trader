@@ -17,7 +17,7 @@ class TradesController < ApplicationController
     end
 
     @volume = @trades.sum('ABS(btc_amount)')
-    @wins   = @trades.sum('paymium_cost + kraken_cost - kraken_fee')
+    @wins   = @trades.sum('paymium_cost + counter_order_cost - counter_order_fee')
   end
 
   private
