@@ -2,6 +2,8 @@ class MonitorPriceJob < ApplicationJob
   queue_as :trader
 
   def perform
+    return if Setting['active'] == false
+
     robot = RobotService.new
 
     robot.monitor_trades
