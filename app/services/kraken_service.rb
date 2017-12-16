@@ -197,7 +197,7 @@ class KrakenService < ExchangeService
     def buy_order_estimated_cost(type:, price:, btc_amount:)
       case type
         when :market
-          - asks_price(btc_amount) * btc_amount
+          - KrakenService.instance.asks_price(btc_amount) * btc_amount
         when :limit
           - price*btc_amount
         else
