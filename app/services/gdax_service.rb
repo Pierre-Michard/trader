@@ -32,6 +32,10 @@ class GdaxService < ExchangeService
     balance[:btc][:available]
   end
 
+  def minimum_amount
+    0.01
+  end
+
   def place_order(type: :market, direction:, btc_amount:, price: nil)
     Rails.cache.delete(:gdax_balance)
     case direction

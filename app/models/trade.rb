@@ -1,7 +1,7 @@
 class Trade < ApplicationRecord
   include AASM
 
-  attr_accessor :counterpart_remote_order
+  attr_accessor :remote_counter_order
 
   scope :missed_orders, -> { where(created_at: 30.minutes.ago..1.minute.ago, aasm_state: :created)}
 
@@ -13,13 +13,12 @@ class Trade < ApplicationRecord
 
   aasm :requires_lock => true do
     state :created, :inital => true
-    state :counter_order_placed,     before_enter: :place_counter_order
+    state :counter_order_placed, before_enter: :place_counterpart_order
     state :ignored
-    state :closed,                  before_enter: :set_counter_order_info
+    state :closed, before_enter: :set_counter_order_info
     state :failed
 
     event :place_counter_order do
-
       transitions :from => :created,
                   :to => :ignored,
                   :guard => [:amount_too_low?]
@@ -45,10 +44,10 @@ class Trade < ApplicationRecord
   end
 
   def amount_too_low?
-    btc_amount.abs < 0.002
+    btc_amount.abs < Setting.counter_orders_service.minimum_amount
   end
 
-  def place_counter_order
+  def place_counterpart_order
     unless Rails.env.development? or self.counter_order_uuid.present?
       logger.info "place counter order #{btc_amount}"
       self.counter_order_uuid = Setting.counter_orders_service.place_order(
@@ -75,14 +74,14 @@ class Trade < ApplicationRecord
   end
 
   def counter_order_closed?
-    remote_counter_order[:status] == :closed
+    counter_order_status == :closed
   end
 
   def counter_order_canceled?
-    remote_counter_order[:status] == :canceled
+    counter_order_status == :canceled
   end
 
-  def set_counterpart_info
+  def set_counter_order_info
     if counter_order_closed?
       self.counter_order_price = remote_counter_order[:price]
       self.counter_order_fee   = remote_counter_order[:fee]
@@ -113,14 +112,14 @@ class Trade < ApplicationRecord
   end
 
   def self.set_counterpart_info
-    Trade.where(counter_order_cost: nil).where.not(counter_order_uuid: nil).pluck(:counter_order_uuid).each_slice(20) do |kraken_uuids|
+    Trade.where(counter_order_cost: nil).where.not(counter_order_uuid: nil).pluck(:counter_order_uuid).each_slice(20) do |counter_order_uuids|
       begin
-        kraken_orders = KrakenService.instance.client.private.query_orders(txid: kraken_uuids.join(','))
-        kraken_orders.each do |kraken_uuid, kraken_order|
-          Rails.logger.info("update trade #{kraken_uuid}")
-          trade = Trade.find_by(kraken_uuid: kraken_uuid)
-          trade.kraken_remote_order =kraken_order
-          trade.set_kraken_info!
+        counter_orders = Setting.counter_orders_service.orders(counter_order_uuids)
+        counter_orders.each do |counter_order_uuid, counter_order|
+          Rails.logger.info("update trade #{counter_order_uuid}")
+          trade = Trade.find_by(counter_order_uuid: counter_order_uuid)
+          trade.remote_counter_order = counter_order
+          trade.set_counterpart_info!
         end
 
       rescue => e
@@ -137,10 +136,10 @@ class Trade < ApplicationRecord
     end
 
     if key.nil?
-      place_kraken_order!
+      place_counter_order!
     else
-      update_attributes(aasm_state: :kraken_order_placed, kraken_uuid: key)
-      @counterpart_remote_order = value
+      update_attributes(aasm_state: :counter_order_placed, kraken_uuid: key)
+      @remote_counter_order = value
       close!
     end
   end
@@ -149,9 +148,7 @@ class Trade < ApplicationRecord
     @recent_unmatched_orders ||= begin
       recent_orders = Setting.counter_orders_service.recent_orders
       matched_keys = self.where(counter_order_uuid: recent_orders.keys).pluck(:counter_order_uuid)
-      recent_orders
-          .reject{|key, value| matched_keys.include? key}
-          .reject{|key, value| value[:created_at] < 1.day.ago || value[:type] != 'market'}
+      recent_orders.reject{|key, value| matched_keys.include?(key) || value[:created_at] < 1.day.ago || value[:type] != 'market'}
     end
   end
 

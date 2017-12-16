@@ -89,7 +89,15 @@ RSpec.describe KrakenService do
       expect(res).to be_a Hash
       p res
     end
+  end
 
+  describe 'retrieve orders' do
+    it 'retrievs orders' do
+      res = subject.orders(['O4X5EA-UZ7VM-5DBKUG'])
+      expect(res).to be_a Hash
+      expect(res).to have_key 'O4X5EA-UZ7VM-5DBKUG'
+      p res
+    end
   end
 
   describe 'open_orders' do

@@ -77,6 +77,10 @@ class KrakenService < ExchangeService
     client.delete("user/orders/#{order['uuid']}/cancel")
   end
 
+  def minimum_amount
+    0.002
+  end
+
   def place_order(type: :market, direction:, btc_amount:, price: nil, nb_retry:3)
     order = {
         pair: 'XXBTZEUR',
@@ -114,6 +118,15 @@ class KrakenService < ExchangeService
   def order(order_uuid)
     res = client.private.query_orders(txid: order_uuid, trades: true)
     format_order(res[order_uuid], order_uuid)
+  end
+
+
+  def orders(order_uuids)
+    orders = client.private.query_orders(txid: order_uuids.join(','))
+    orders.inject({})do |hash, (order_id, order)|
+      hash[order_id] = format_order(order, order_id)
+      hash
+    end
   end
 
   private
