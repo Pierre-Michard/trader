@@ -4,13 +4,15 @@ s = Rufus::Scheduler.singleton
 
 if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
   s.every '5s' do
-    unless $exiting_rails
-      MonitorPriceJob.perform_later unless Resque.size('trader_production_trader') > 2
+    unless $exiting_rails || Setting['active'] == false || Resque.size('trader_production_trader') > 2
+      MonitorPriceJob.perform_later
     end
   end
 
   s.every '31s' do
-    MonitorTradesJob.perform_later unless Resque.size('trader_production_trader') > 2
+    unless Setting['active'] == false || Resque.size('trader_production_trader') > 2
+      MonitorTradesJob.perform_later
+    end
   end
 
   s.every '30s' do
