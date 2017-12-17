@@ -171,7 +171,7 @@ class KrakenService < ExchangeService
     def adjust_balance
       @open_orders.each do |_key, order|
         if order[:side] == 'buy'
-          update_balance(:eur, buy_order_estimated_cost(type: order[:type].to_sym, price: order[:price], btc_amount: order[:volume]))
+          update_balance(:eur, buy_order_estimated_cost(type: order[:type].to_sym, price: order[:price], btc_amount: order[:vol]))
         else
           update_balance(:btc, -order[:volume])
         end
