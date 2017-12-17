@@ -131,8 +131,8 @@ class Trade < ApplicationRecord
   def fix_order!
     key, value = self.class.recent_unmatched_orders
                   .detect do |_key, value|
-                    ((BigDecimal(value.vol) == BigDecimal(btc_amount.to_s).abs) &&
-                     (value.descr.type == (btc_amount > 0) ? 'sell':'buy' ))
+                    ((BigDecimal(value[:vol]) == BigDecimal(btc_amount.to_s).abs) &&
+                     (value[:side] == (btc_amount > 0) ? 'sell':'buy' ))
     end
 
     if key.nil?
