@@ -165,4 +165,8 @@ class Trade < ApplicationRecord
     end
   end
 
+  def self.placing_counter_order?
+    self.last.created? || self.last.counter_order_placed?
+  end
+
 end

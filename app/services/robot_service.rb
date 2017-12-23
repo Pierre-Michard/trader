@@ -96,7 +96,7 @@ class RobotService
   end
 
   def monitor_price(direction: :buy)
-    @is_counterpart_open_order = (@is_counterpart_open_order.nil?)? Setting.counter_orders_service.open_orders? : @is_counterpart_open_order
+    @is_counterpart_open_order = Trade.placing_counter_order?
     logger.info "monitor_#{direction}_price"
     target_price = send("target_#{direction}_price")
     logger.info "target #{direction} price #{target_price.to_f}"
