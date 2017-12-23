@@ -138,7 +138,7 @@ class Trade < ApplicationRecord
     if key.nil?
       place_counter_order!
     else
-      update_attributes(aasm_state: :counter_order_placed, kraken_uuid: key)
+      update_attributes(aasm_state: :counter_order_placed, counter_order_uuid: key)
       @remote_counter_order = value
       close!
     end
