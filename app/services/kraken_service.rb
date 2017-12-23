@@ -20,25 +20,29 @@ class KrakenService < ExchangeService
   end
 
   def balance(force_fetch: false)
-    balance = Rails.cache.fetch(:kraken_balance, expires_in: CACHE_EXPIRATION_DELAY.seconds, force: force_fetch) do
+    balance = Rails.cache.fetch(:kraken_balance, expires_in: CACHE_EXPIRATION_DELAY, force: force_fetch) do
       client.private.balance
     end
     AdjustedBalance.new(balance, open_orders).balance
   end
 
   def open_orders(force_fetch: false)
-    Rails.cache.fetch(:kraken_open_orders, expires_in: CACHE_EXPIRATION_DELAY.seconds, force: force_fetch) do
-      client.private.open_orders['open'].inject({})do |hash, (order_id, order)|
-        hash[order_id] = format_order(order, order_id)
-        hash
+    Rails.cache.fetch(:kraken_open_orders, expires_in: CACHE_EXPIRATION_DELAY, force: force_fetch) do
+      with_retries do
+        client.private.open_orders['open'].inject({})do |hash, (order_id, order)|
+          hash[order_id] = format_order(order, order_id)
+          hash
+        end
       end
     end
   end
 
   def closed_orders
-    client.private.closed_orders['closed'].inject({})do |hash, (order_id, order)|
-      hash[order_id] = format_order(order, order_id)
-      hash
+    with_retries do
+      client.private.closed_orders['closed'].inject({})do |hash, (order_id, order)|
+        hash[order_id] = format_order(order, order_id)
+        hash
+      end
     end
   end
 
@@ -50,7 +54,7 @@ class KrakenService < ExchangeService
     cached_orders = Rails.cache.read(:kraken_open_orders)
     if cached_orders
       cached_orders.merge!(order[:id] => order)
-      Rails.cache.write(:kraken_open_orders, cached_orders, expires_in: CACHE_EXPIRATION_DELAY.seconds)
+      Rails.cache.write(:kraken_open_orders, cached_orders, expires_in: CACHE_EXPIRATION_DELAY)
     end
   end
 
@@ -81,7 +85,7 @@ class KrakenService < ExchangeService
     0.002
   end
 
-  def place_order(type: :market, direction:, btc_amount:, price: nil, nb_retry:3)
+  def place_order(type: :market, direction:, btc_amount:, price: nil)
     order = {
         pair: 'XXBTZEUR',
         type: direction.to_s,
@@ -89,13 +93,16 @@ class KrakenService < ExchangeService
         volume: btc_amount
     }
     order.merge!(price: price) if type != :market
-    res = client.private.add_order(order)
+
+    res = with_retries do
+      client.private.add_order(order)
+    end
 
     cached_order = {
         id: res['txid'][0],
         side: direction.to_s,
         type: type.to_s,
-        volume: btc_amount,
+        vol: btc_amount,
         status: :opened,
         created_at: DateTime.now,
         price: price
@@ -104,11 +111,15 @@ class KrakenService < ExchangeService
     cache_open_order(cached_order)
 
     cached_order[:id]
+  end
 
+
+  def with_retries(nb_retries: 3)
+    yield
   rescue => e
-    Rails.logger.warn("An #{e.class} exception occured while trying to place order: #{e.message}")
-    if nb_retry > 0
-      nb_retry = nb_retry - 1
+    Rails.logger.warn("#{caller[0][/`.*'/][1..-2]}: an #{e.class} exception occurred: #{e.message}")
+    if nb_retries > 0
+      nb_retries = nb_retries - 1
       retry
     else
       raise

@@ -55,15 +55,23 @@ class GdaxService < ExchangeService
   end
 
   def open_orders
-    orders = client.orders(status: 'open')
-    orders.reduce({}) do |h, order|
-     h[order.id] = format_order(order)
-     h
-   end
+    orders(status: 'open')
   end
 
   def open_orders?
     open_orders.size > 0
+  end
+
+  def recent_orders
+    orders(status: 'all')
+  end
+
+  def orders(status:)
+    orders = client.orders(status: status)
+    orders.reduce({}) do |h, order|
+      h[order.id] = format_order(order)
+      h
+    end
   end
 
   private
