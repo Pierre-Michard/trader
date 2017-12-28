@@ -94,7 +94,7 @@ class KrakenService < ExchangeService
     }
     order.merge!(price: price) if type != :market
 
-    res = with_retries(nb_retries: 1) do
+    res = with_retries(nb_retries: 0) do
       client.private.add_order(order)
     end
 
