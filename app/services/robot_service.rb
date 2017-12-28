@@ -1,5 +1,4 @@
 class RobotService
-  MIN_TRADE_AMOUNT= 0.002
   MAX_TRADE_AMOUNT= 0.8
 
   def initialize
@@ -95,6 +94,10 @@ class RobotService
     keep_only_last_order(current_buy_orders)
   end
 
+  def min_trade_amount
+    Setting.counter_orders_service.minimum_amount
+  end
+
   def monitor_price(direction: :buy)
     @is_counterpart_open_order = Trade.placing_counter_order?
     logger.info "monitor_#{direction}_price"
@@ -112,7 +115,7 @@ class RobotService
       end
 
       amount = send("#{direction}_amount")
-      if amount > MIN_TRADE_AMOUNT && !@is_counterpart_open_order
+      if amount > min_trade_amount && !@is_counterpart_open_order
         logger.info "place Paymium #{direction} order amount: #{amount}, price #{target_price}"
         PaymiumService.instance.place_limit_order(direction: direction, btc_amount: amount, price: target_price)
       end
