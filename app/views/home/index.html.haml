@@ -74,9 +74,9 @@
     %tr.info
       %td Total
       %td eur
-      %td= ((@stat.kraken_eur_balance + @stat.paymium_eur_balance)/ @stat.price).round(4)
+      %td= ((@stat.total_eur)/ @stat.price).round(4)
       %td
-        %span= (@stat.kraken_eur_balance + @stat.paymium_eur_balance).round(2)
+        %span= (@stat.total_eur).round(2)
         %span.fa.fa-euro
     %tr.warning
       %td Total
