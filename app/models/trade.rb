@@ -166,7 +166,8 @@ class Trade < ApplicationRecord
   end
 
   def self.placing_counter_order?
-    self.last.created? || self.last.counter_order_placed?
+    recent_order = self.last
+    recent_order.created_at > 30.minutes.ago && (recent_order.created? || recent_order.counter_order_placed?)
   end
 
 end
