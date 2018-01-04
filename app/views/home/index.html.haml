@@ -97,6 +97,11 @@
       %td= (@stat.total_kraken_virtual_btc - @stat.total_paymium_virtual_btc).round(2)
       %td= (@stat.total_kraken_virtual_eur - @stat.total_paymium_virtual_eur).round(2)
     %tr
+      %td Gdax - Paymium
+      %td total
+      %td= (@stat.total_gdax_virtual_btc - @stat.total_paymium_virtual_btc).round(2)
+      %td= (@stat.total_gdax_virtual_eur - @stat.total_paymium_virtual_eur).round(2)
+    %tr
       %td Btc - Eur
       %td total
       %td= (@stat.total_btc - @stat.total_eur/@stat.price).round(2)
