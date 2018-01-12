@@ -4,8 +4,10 @@ class Stat < ApplicationRecord
     self[:price] ||= KrakenService.instance.last_trade['price']
     self[:paymium_btc_balance]  ||= PaymiumService.instance.balance_btc + PaymiumService.instance.locked_btc
     self[:paymium_eur_balance]  ||= PaymiumService.instance.balance_eur + PaymiumService.instance.locked_eur
-    self[:kraken_eur_balance]   ||= KrakenService.instance.balance_eur
-    self[:kraken_btc_balance]   ||= KrakenService.instance.balance_btc
+    #self[:kraken_eur_balance]   ||= KrakenService.instance.balance_eur
+    self[:kraken_eur_balance]   ||= 48.02
+    #self[:kraken_btc_balance]   ||= KrakenService.instance.balance_btc
+    self[:kraken_btc_balance] ||= 0.06644202
     self[:gdax_eur_balance]   ||= GdaxService.instance.balance_eur
     self[:gdax_btc_balance]   ||= GdaxService.instance.balance_btc
     self[:paymium_best_bid]     ||= PaymiumService.instance.bids[0][:price]
