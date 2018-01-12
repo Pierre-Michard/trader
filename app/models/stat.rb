@@ -12,8 +12,8 @@ class Stat < ApplicationRecord
     self[:gdax_btc_balance]   ||= GdaxService.instance.balance_btc
     self[:paymium_best_bid]     ||= PaymiumService.instance.bids[0][:price]
     self[:paymium_best_ask]     ||= PaymiumService.instance.asks[0][:price]
-    self[:kraken_best_bid]      ||= KrakenService.instance.bids[0][:price]
-    self[:kraken_best_ask]      ||= KrakenService.instance.asks[0][:price]
+    #self[:kraken_best_bid]      ||= KrakenService.instance.bids[0][:price]
+    #self[:kraken_best_ask]      ||= KrakenService.instance.asks[0][:price]
     self[:gdax_best_bid]      ||= GdaxService.instance.bids[0][:price]
     self[:gdax_best_ask]      ||= GdaxService.instance.asks[0][:price]
   end
