@@ -112,6 +112,7 @@ class RobotService
       if current_order
         logger.info "cancel #{direction} order"
         PaymiumService.instance.cancel_order(current_order)
+        sleep(0.05)
       end
 
       amount = send("#{direction}_amount")
