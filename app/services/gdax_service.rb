@@ -12,7 +12,7 @@ class GdaxService < ExchangeService
   end
 
   def balance(force_fetch: false)
-    Rails.cache.fetch(:gdax_balance, expires_in: CACHE_EXPIRATION_DELAY.seconds, force: force_fetch) do
+    Rails.cache.fetch(:gdax_balance, expires_in: CACHE_EXPIRATION_DELAY, force: force_fetch) do
       client.accounts.reduce({}.with_indifferent_access) do |h, account|
         h.merge({
             account.currency.downcase => {

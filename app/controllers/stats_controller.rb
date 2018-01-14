@@ -28,7 +28,7 @@ class StatsController < ApplicationController
          Stat.where('created_at > ?', 1.year.ago).group_by_week(:created_at)
        when 'month'
          Stat.group_by_month(:created_at)
-             end
+       end
 
     @pk_buy_marge  = @stats.average('(paymium_best_bid - kraken_best_ask) / price')
     @pk_sell_marge = @stats.average('(paymium_best_ask - kraken_best_bid) / price')
@@ -47,5 +47,6 @@ class StatsController < ApplicationController
     @gdax_best_ask  = @stats.average('gdax_best_ask - kraken_best_ask')
     @gdax_best_bid  = @stats.average('gdax_best_bid - kraken_best_ask')
 
+    @hour_histo = Trade.where('created_at > ?', 2.months.ago).group("date_part('hour', created_at)").select("date_part('hour', created_at)", 'sum(abs(btc_amount))')
   end
 end
