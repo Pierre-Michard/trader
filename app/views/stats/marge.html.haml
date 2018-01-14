@@ -1,4 +1,4 @@
-%h2 marge
+%h2 margin
 
 .btn-group{role: 'group'}
   %a.btn.btn-info{href: stats_marge_path(period: 'hour'), class: [(@period == 'hour') && 'active' ]}
@@ -10,7 +10,7 @@
   %a.btn.btn-info{href: stats_marge_path(period: 'month'), class: [(@period == 'month') && 'active' ]}
     month
 
-%h3 btc balance
+%h3 margin
 = line_chart [  {name: 'pk_buy_marge',  data: @pk_buy_marge},
                 {name: 'pk_sell_marge', data: @pk_sell_marge},
                 {name: 'pg_buy_marge',  data: @pg_buy_marge},
@@ -19,5 +19,10 @@
                 {name: 'kg_sell_marge', data: @kg_sell_marge}]
 
 %h3 bids vs asks
-= line_chart [{name: 'paymium_best_bid', data: @paymium_best_bid},{name:'paymium_best_ask', data: @paymium_best_ask},{name:'kraken_best_ask', data: @kraken_best_ask},{name:'kraken_best_bid', data: @kraken_best_bid},{name:'gdax_best_ask', data: @gdax_best_ask},{name:'gdax_best_bid', data: @gdax_best_bid}]
+= line_chart [  {name: 'paymium_best_bid', data: @paymium_best_bid},
+                {name:'paymium_best_ask', data: @paymium_best_ask},
+                {name:'kraken_best_ask', data: @kraken_best_ask},
+                {name:'kraken_best_bid', data: @kraken_best_bid},
+                {name:'gdax_best_ask', data: @gdax_best_ask},
+                {name:'gdax_best_bid', data: @gdax_best_bid}]
 

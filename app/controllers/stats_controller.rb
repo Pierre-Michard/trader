@@ -14,6 +14,7 @@ class StatsController < ApplicationController
 
     @eur_balance = @stats.average('paymium_eur_balance + kraken_eur_balance + COALESCE(gdax_eur_balance, 0)')
     @btc_balance = @stats.average('paymium_btc_balance + kraken_btc_balance + COALESCE(gdax_btc_balance, 0)')
+    @virtual_eur_balance = @stats.average('paymium_eur_balance + kraken_eur_balance + COALESCE(gdax_eur_balance, 0) + price * (paymium_btc_balance + kraken_btc_balance + COALESCE(gdax_btc_balance, 0))')
   end
 
   def marge
