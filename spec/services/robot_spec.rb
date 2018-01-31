@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe RobotService do
+RSpec.describe RobotService do
   subject{RobotService.new}
 
   describe 'sell_amount' do
@@ -36,7 +36,7 @@ describe RobotService do
     context 'huge presure' do
       let(:buy_presure){1}
       it 'computes correct marge' do
-        expect(subject.buy_marge).to be_within(0.0001).of(0.003)
+        expect(subject.buy_marge).to be_within(0.0001).of(0.0025)
       end
     end
     context 'regular presure' do
@@ -48,7 +48,7 @@ describe RobotService do
     context 'low presure' do
       let(:buy_presure){0}
       it 'computes correct marge' do
-        expect(subject.buy_marge).to be_within(0.0001).of(0.03)
+        expect(subject.buy_marge).to be_within(0.0001).of(0.04)
       end
     end
 
@@ -61,19 +61,19 @@ describe RobotService do
     context 'huge presure' do
       let(:sell_presure){1}
       it 'computes correct marge' do
-        expect(subject.sell_marge).to be_within(0.0001).of(0.005)
+        expect(subject.sell_marge).to be_within(0.0001).of(0.0025)
       end
     end
     context 'regular presure' do
       let(:sell_presure){0.5}
       it 'computes correct marge' do
-        expect(subject.sell_marge).to be_within(0.0001).of(0.01)
+        expect(subject.sell_marge).to be_within(0.0001).of(0.008)
       end
     end
     context 'low presure' do
       let(:sell_presure){0}
       it 'computes correct marge' do
-        expect(subject.sell_marge).to be_within(0.0001).of(0.03)
+        expect(subject.sell_marge).to be_within(0.0001).of(0.04)
       end
     end
 
