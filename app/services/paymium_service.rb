@@ -2,6 +2,7 @@ require 'singleton'
 
 class PaymiumService
   include Singleton
+  include Retriable
 
   CONFIG = YAML.load(File.read(Rails.root.join('config', 'secret', 'paymium.yml'))).with_indifferent_access
   CURRENT_ORDERS_CACHE_DELAY = 5.seconds
@@ -135,7 +136,9 @@ class PaymiumService
 
   def cancel_order(order)
     Rails.logger.info "cancel order #{order['uuid']}"
-    client.delete("user/orders/#{order['uuid']}/cancel")
+    with_retries(nb_retries: 1) do
+      client.delete("user/orders/#{order['uuid']}/cancel")
+    end
     Rails.cache.write(:current_orders, current_orders.select{|o| o['uuid'] != order['uuid']}, expires_in: CURRENT_ORDERS_CACHE_DELAY)
   end
 
@@ -146,14 +149,16 @@ class PaymiumService
   end
 
   def place_limit_order(direction:, btc_amount:, price:)
-    res = client.post('user/orders', {
-        type: 'LimitOrder',
-        currency: 'EUR',
-        direction: direction,
-        amount: btc_amount,
-        price: price.round(2)
-    })
-    Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: CURRENT_ORDERS_CACHE_DELAY)
+    with_retries(nb_retries: 1) do
+      res = client.post('user/orders', {
+          type: 'LimitOrder',
+          currency: 'EUR',
+          direction: direction,
+          amount: btc_amount,
+          price: price.round(2)
+      })
+      Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: CURRENT_ORDERS_CACHE_DELAY)
+    end
   end
 
   def sdepth(force: false)
