@@ -33,7 +33,7 @@ class GdaxService < ExchangeService
   end
 
   def minimum_amount
-    0.01
+    0.001
   end
 
   def place_order(type: :market, direction:, btc_amount:, price: nil)
