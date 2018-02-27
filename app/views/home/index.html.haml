@@ -107,8 +107,8 @@
       %td= (@stat.total_btc - @stat.total_eur/@stat.price).round(2)
       %td= (@stat.total_btc*@stat.price - @stat.total_eur).round(2)
 %h2 Trade volume
-= column_chart Trade.group_by_day(:created_at).sum('ABS(btc_amount)')
+= column_chart Trade.where('created_at > ?', 1.month.ago.beginning_of_day).group_by_day(:created_at).sum('ABS(btc_amount)')
 %h2 Wins
-= column_chart Trade.group_by_day(:created_at).sum('paymium_cost + counter_order_cost - counter_order_fee')
+= column_chart Trade.where('created_at > ?', 1.month.ago.beginning_of_day).group_by_day(:created_at).sum('paymium_cost + counter_order_cost - counter_order_fee')
 
 = render partial: 'trades/index', object: @trades
