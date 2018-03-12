@@ -3,9 +3,19 @@ require 'rufus-scheduler'
 s = Rufus::Scheduler.singleton
 
 if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
-  s.every '5s' do
+  s.every '2s' do |job|
     unless $exiting_rails || Setting['active'] == false || Resque.size('trader_production_trader') > 2
       MonitorPriceJob.perform_later
+
+      current_hour = Time.now.hour
+
+      if (0..5).include? current_hour
+        job.next_time = Time.now + 10
+      elsif (6..7).include? current_hour
+        job.next_time = Time.now + 5
+      elsif [8, 15, 20].include? current_hour
+        job.next_time = Time.now + 1
+      end
     end
   end
 
