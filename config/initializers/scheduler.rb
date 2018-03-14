@@ -10,9 +10,9 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
       current_hour = Time.now.hour
 
       if (0..5).include? current_hour
-        job.next_time = Time.now + 10
+        job.next_time = EtOrbi::EoTime.now + 10
       elsif (6..7).include? current_hour
-        job.next_time = Time.now + 5
+        job.next_time = EtOrbi::EoTime.now + 5
       end
     end
   end
