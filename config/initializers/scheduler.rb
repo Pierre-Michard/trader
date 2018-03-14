@@ -13,8 +13,6 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
         job.next_time = Time.now + 10
       elsif (6..7).include? current_hour
         job.next_time = Time.now + 5
-      elsif [8, 15, 20].include? current_hour
-        job.next_time = Time.now + 1
       end
     end
   end
