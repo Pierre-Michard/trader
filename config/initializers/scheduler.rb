@@ -3,7 +3,7 @@ require 'rufus-scheduler'
 s = Rufus::Scheduler.singleton
 
 if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
-  s.every '2s' do |job|
+  s.every '3s' do |job|
     unless $exiting_rails || Setting['active'] == false || Resque.size('trader_production_trader') > 2
       MonitorPriceJob.perform_later
 
