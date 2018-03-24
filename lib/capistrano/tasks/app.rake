@@ -5,7 +5,7 @@ namespace :app do
   task :enable do
     on roles(:web) do |host|
       within release_path do
-        execute :sudo, :systemctl, "daemon-reload"
+        execute :systemctl, '--user', "daemon-reload"
         SERVICES.each do |service|
           execute :sudo, :systemctl, :enable, service
         end
@@ -17,9 +17,9 @@ namespace :app do
   task :start do
     on roles(:web) do |host|
       within release_path do
-        execute :sudo, :systemctl, "daemon-reload"
+        execute :systemctl, '--user', "daemon-reload"
         SERVICES.each do |service|
-          execute :sudo, :systemctl, :start, service
+          execute :systemctl, '--user', :start, service
         end
       end
     end
@@ -30,7 +30,7 @@ namespace :app do
     on roles(:web) do |host|
       within release_path do
         SERVICES.each do |service|
-          execute :sudo, :systemctl, :stop, service
+          execute :systemctl, '--user', :stop, service
         end
       end
     end
@@ -40,9 +40,9 @@ namespace :app do
   task :restart do
     on roles(:web) do |host|
       within release_path do
-        execute :sudo, :systemctl, "daemon-reload"
+        execute :systemctl, '--user', "daemon-reload"
         SERVICES.each do |service|
-          execute :sudo, :systemctl, :restart, service
+          execute :systemctl, '--user', :restart, service
         end
       end
     end

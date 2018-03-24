@@ -35,11 +35,13 @@ set :user, "trader"
 
 set :foreman_template, 'systemd'
 set :foreman_export_path, ->{ File.join(shared_path, 'systemd') }
+
 set :foreman_options, ->{ {
     app: 'trader',
     log: File.join(shared_path, 'log')
 } }
 
+set :rvm_type, :system
 
 after 'deploy:publishing', 'foreman:export'
 after 'foreman:export', 'app:restart'
