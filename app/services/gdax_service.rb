@@ -74,6 +74,24 @@ class GdaxService < ExchangeService
     end
   end
 
+  def orderbook
+    res = client.orderbook(product_id: 'BTC-EUR', level: 2)
+    %w(bids asks).reduce({}) do |stack, key|
+      stack[key.to_sym] = res[key].map do |price, amount, _nb_trades|
+        {
+            price: BigDecimal(price),
+            amount: BigDecimal(amount)
+        }
+      end
+      stack
+    end
+  end
+
+  def get_last_trade
+    res = client.last_trade(product_id: 'BTC-EUR')
+    {price: res['price'], volume: res['volume'], time: Time.parse(res['time'])}
+  end
+
   private
 
   def format_status(status)

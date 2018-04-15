@@ -9,25 +9,18 @@ module WithSdepth
 
   end
 
-  def get_sdepth
-    sdepth = JSON.parse($redis.get(sdepth_key)).with_indifferent_access
-    sdepth[:now] = Time.at(sdepth[:now])
-    unless sdepth[:now] > 1.minutes.ago
-      raise OutdatedData.new 'no recent sdepth available'
+  def sdepth(force_fetch: false)
+    Rails.cache.fetch(sdepth_key, expires_in: 10.seconds, force: force_fetch) do
+      orderbook
     end
-    sdepth[:sdepth]
-  end
-
-  def set_sdepth(sdepth)
-    $redis.set(sdepth_key, sdepth)
   end
 
   def asks
-    get_sdepth[:asks]
+    sdepth[:asks]
   end
 
   def bids
-    get_sdepth[:bids]
+    sdepth[:bids]
   end
 
   def bids_price(btc_amount = 1)

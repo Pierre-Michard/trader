@@ -131,6 +131,29 @@ class KrakenService < ExchangeService
     end
   end
 
+  def orderbook
+    depth_data = client.public.order_book('XXBTZEUR')
+    %w(bids asks).reduce({}) do |stack, key|
+      stack[key.to_sym] = depth_data['XXBTZEUR'][key].map do |price, amount, _created_at|
+        {
+            price: BigDecimal(price),
+            amount: BigDecimal(amount)
+        }
+      end
+      stack
+    end
+  end
+
+  def get_last_trade
+    trades = client.public.trades('XXBTZEUR')
+    last = trades['XXBTZEUR'][-1]
+    {
+        price: BigDecimal(last[0]),
+        volume: BigDecimal(last[1]),
+        time: Time.at(last[2])
+    }
+  end
+
   private
 
   def format_order(order, uuid)

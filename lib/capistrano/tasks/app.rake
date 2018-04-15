@@ -51,17 +51,18 @@ namespace :app do
   desc "Create a restart script"
   task :create_restart_script do
     on roles(:web) do |host|
-      file_path = '/etc/cron.hourly/restart_trader_services'
+      file_path = '/home/trader/bin/restart_trader_services'
 
-      file_content = "#!/bin/sh\n"
+      file_content = "#!/bin/bash\n"
+      file_content += "export XDG_RUNTIME_DIR=/run/user/$(id -u)\n"
       file_content += SERVICES.
           map{|s| s.gsub('.service', '')}.
-          map{|s| "service #{s} restart"}.
+          map{|s| "systemctl --user restart #{s}"}.
           join("\n")
 
-      execute :sudo, :echo, "'#{file_content}' >/tmp/script"
-      execute :sudo, :mv, '/tmp/script', file_path
-      execute :sudo, :chmod, "+x #{file_path}"
+      execute :echo, "'#{file_content}' >/tmp/script"
+      execute :mv, '/tmp/script', file_path
+      execute :chmod, "+x #{file_path}"
     end
   end
 end
