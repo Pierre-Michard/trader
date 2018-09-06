@@ -21,6 +21,15 @@ GIT
       activejob (~> 5.0)
 
 GIT
+  remote: https://github.com/natonnelier/kraken_client.git
+  revision: 502806d09b8225e10671081f4c826cba4db490ea
+  specs:
+    kraken_client (1.3.0)
+      activesupport (>= 3.2)
+      addressabler
+      httparty
+
+GIT
   remote: https://github.com/sinatra/sinatra.git
   revision: b801c6b76b89eb071e2b01700273054bbe8aae05
   specs:
@@ -213,10 +222,6 @@ GEM
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
-    kraken_client (1.3.0)
-      activesupport (>= 3.2)
-      addressabler
-      httparty
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -428,7 +433,7 @@ DEPENDENCIES
   httparty (~> 0.15.1)
   jbuilder (~> 2.5)
   jquery-rails
-  kraken_client
+  kraken_client!
   listen (~> 3.0.5)
   paymium_api!
   pg (~> 0.18)
