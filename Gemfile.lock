@@ -35,7 +35,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (5.0.0)
+    aasm (4.12.3)
       concurrent-ruby (~> 1.0)
     actioncable (5.0.7)
       actionpack (= 5.0.7)
@@ -202,7 +202,7 @@ GEM
       nokogiri (>= 1.6.0)
       ruby_parser (~> 3.5)
     http_parser.rb (0.6.0)
-    httparty (0.16.2)
+    httparty (0.15.7)
       multi_xml (>= 0.5.2)
     i18n (1.1.0)
       concurrent-ruby (~> 1.0)
@@ -408,7 +408,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm
+  aasm (~> 4.12.3)
   activejob-retriable!
   autoprefixer-rails
   bootstrap-sass
@@ -425,6 +425,7 @@ DEPENDENCIES
   foreman!
   groupdate
   haml-rails (~> 1.0)
+  httparty (~> 0.15.1)
   jbuilder (~> 2.5)
   jquery-rails
   kraken_client
