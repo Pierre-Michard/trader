@@ -246,7 +246,7 @@ class PaymiumService
 
   def post(*args)
     res = Lock.acquire('paymium_client') do
-      client.post(*args).with_indifferent_acces
+      client.post(*args)
     end
 
     if res.is_a? Array
