@@ -170,4 +170,15 @@ class Trade < ApplicationRecord
     recent_order.created_at > 30.minutes.ago && (recent_order.created? || recent_order.counter_order_placed?)
   end
 
+
+  def self.find_or_create_trade(trade)
+    logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
+    find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
+      t.btc_amount= trade[:amount]
+      t.paymium_cost = trade[:counterpart][:amount]
+      t.paymium_price = trade[:order][:price]
+      t.paymium_order_uuid = trade[:order][:uuid]
+    end
+  end
+
 end

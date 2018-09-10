@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: https://github.com/Pierre-Michard/paymium_api.git
-  revision: 57855c5def82def65108a930db457aa959388e7a
+  revision: b44145e569a994f61d4edd4bb6319cf457f43fbb
   specs:
     paymium_api (0.0.7)
       activesupport
@@ -244,7 +244,7 @@ GEM
     nio4r (2.3.1)
     nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
-    oj (3.6.7)
+    oj (3.6.8)
     pg (0.21.0)
     public_suffix (3.0.3)
     puma (3.12.0)

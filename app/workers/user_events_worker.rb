@@ -3,7 +3,7 @@ class UserEventsWorker
   from_queue 'paymium_events', env: nil
 
   def work(raw_event)
-    Sneakers::logger.info "recevied raw_event #{raw_event}"
+    Sneakers::logger.info "received raw_event #{raw_event}"
     if raw_event == 'ready'
       PaymiumService.instance.broadcast_channel_id
     else
@@ -12,11 +12,11 @@ class UserEventsWorker
 
       unless orders.blank?
         PaymiumService.instance.extract_trades(from_orders:orders).each do |trade|
-          if trade[:created_at] > 1.minute.ago
+          unless Trade.where(paymium_uuid: trade[:uuid]).exists?
             Sneakers::logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
+            Trade.find_or_create_trade(trade)
             Rails.cache.delete(:current_orders)
             Rails.cache.delete(:orders)
-            MonitorTradesJob.perform_later
           end
         end
       end

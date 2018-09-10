@@ -4,7 +4,7 @@ class MonitorPriceJob < ApplicationJob
   def perform
     robot = RobotService.new
 
-    robot.monitor_trades
+    #robot.monitor_trades
     begin
       robot.monitor_price(direction: :sell)
       robot.monitor_price(direction: :buy)
