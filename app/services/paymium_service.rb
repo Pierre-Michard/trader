@@ -1,4 +1,5 @@
 require 'singleton'
+require 'lock'
 
 class PaymiumService
   include Singleton
@@ -31,7 +32,7 @@ class PaymiumService
 
   def user(force_fetch: false)
     Rails.cache.fetch(:paymium_user, expires_in: 60.seconds, force: force_fetch) do
-      client.get('/user').with_indifferent_access
+      get('/user')
     end
   end
 
@@ -60,7 +61,7 @@ class PaymiumService
 
   def current_orders(force_fetch: false)
     Rails.cache.fetch(:current_orders, expires_in: CURRENT_ORDERS_CACHE_DELAY, force: force_fetch) do
-      client.get('user/orders', {'types[]': 'LimitOrder', active: true}).map{|o| o.with_indifferent_access}
+      get('user/orders', {'types[]': 'LimitOrder', active: true})
     end
   end
 
@@ -81,12 +82,12 @@ class PaymiumService
 
   def orders(force_fetch: false)
     Rails.cache.fetch(:orders, expires_in: 60.seconds, force: force_fetch) do
-      client.get('user/orders', {'types[]': ['LimitOrder']}).map{|o| o.with_indifferent_access}
+      get('user/orders', {'types[]': ['LimitOrder']})
     end
   end
 
   def order(order_uuid)
-    client.get("user/orders/#{order_uuid}").with_indifferent_access
+    get("user/orders/#{order_uuid}")
   end
 
   def extract_trades(from_orders:)
@@ -150,7 +151,7 @@ class PaymiumService
 
   def place_limit_order(direction:, btc_amount:, price:)
     with_retries(nb_retries: 1) do
-      res = client.post('user/orders', {
+      res = post('user/orders', {
           type: 'LimitOrder',
           currency: 'EUR',
           direction: direction,
@@ -163,7 +164,7 @@ class PaymiumService
 
   def sdepth(force: false)
     Rails.cache.fetch(:paymium_sdepth, expires_in: 10.seconds, force: force, race_condition_ttl:1.second) do
-      res = client.get('data/eur/depth').with_indifferent_access
+      res = get('data/eur/depth')
       res[:bids] = res[:bids].reverse
       res
     end
@@ -228,6 +229,30 @@ class PaymiumService
   def asks
     sdepth[:asks].each do |ask|
       ask[:mine] = current_sell_orders.any?{|o| o[:price] == ask[:price]}
+    end
+  end
+
+  def get(*args)
+    res = Lock.acquire('paymium_client') do
+      client.get(*args)
+    end
+
+    if res.is_a? Array
+      res.map(&:with_indifferent_access)
+    else
+      res.with_indifferent_access
+    end
+  end
+
+  def post(*args)
+    res = Lock.acquire('paymium_client') do
+      client.post(*args).with_indifferent_acces
+    end
+
+    if res.is_a? Array
+      res.map(&:with_indifferent_access)
+    else
+      res.with_indifferent_access
     end
   end
 end

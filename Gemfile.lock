@@ -319,6 +319,7 @@ GEM
       redis-store (>= 1.2, < 2)
     redis-store (1.5.0)
       redis (>= 2.2, < 5)
+    remote_lock (1.1.0)
     resque (1.27.4)
       mono_logger (~> 1.0)
       multi_json (~> 1.0)
@@ -446,6 +447,7 @@ DEPENDENCIES
   redis-namespace
   redis-rack-cache
   redis-rails
+  remote_lock
   resque
   resque-scheduler
   rspec-rails
@@ -462,4 +464,4 @@ DEPENDENCIES
   will_paginate
 
 BUNDLED WITH
-   1.16.0
+   1.16.2
