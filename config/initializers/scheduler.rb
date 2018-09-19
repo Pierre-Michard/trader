@@ -27,9 +27,9 @@ if $PROGRAM_NAME.match?('bin/rails') && Rails.const_defined?( 'Server')
     RefreshPaymiumInfo.perform_later unless Resque.size('trader_production_refresh_data') > 2
   end
 
-  s.every '30s' do
-    RefreshKrakenAccountJob.perform_later unless Resque.size('trader_production_refresh_data') > 2
-  end
+  #s.every '30s' do
+  #  RefreshKrakenAccountJob.perform_later unless Resque.size('trader_production_refresh_data') > 2
+  #end
 
 
 end
