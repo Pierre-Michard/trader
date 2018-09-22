@@ -205,7 +205,9 @@ class PaymiumService
     first_ask = asks.first
     if (first_bid[:mine] && new_sdepth[:bids].first[:amount] != first_bid[:amount]) ||
         (first_ask[:mine] && new_sdepth[:asks].first[:amount] != first_ask[:amount])
-      MonitorPriceJob.perform_later unless Resque.size('trader_production_trader') > 2
+      unless api_threshold_exceeded? || Resque.size('trader_production_trader') > 2
+        MonitorPriceJob.perform_later
+      end
     end
 
     Rails.cache.write(:paymium_sdepth, new_sdepth, expires_in: 10.seconds)
@@ -237,6 +239,8 @@ class PaymiumService
       client.get(*args)
     end
 
+    Rails.cache.write(:remaining_api_calls, client.remaining_limit, expires_in: 10.minutes)
+
     if res.is_a? Array
       res.map(&:with_indifferent_access)
     else
@@ -254,5 +258,21 @@ class PaymiumService
     else
       res.with_indifferent_access
     end
+  end
+
+  def api_threshold_exceeded?
+    if remaining_api_calls.nil?
+      false
+    else
+      remaining_api_calls < api_current_threshold
+    end
+  end
+
+  def api_current_threshold
+    24.hours.to_i - Time.now.seconds_since_midnight
+  end
+
+  def remaining_api_calls
+    Rails.cache.read(:remaining_api_calls)
   end
 end
