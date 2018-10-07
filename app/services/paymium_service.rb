@@ -6,7 +6,7 @@ class PaymiumService
   include Retriable
 
   CONFIG = YAML.load(File.read(Rails.root.join('config', 'secret', 'paymium.yml'))).with_indifferent_access
-  CURRENT_ORDERS_CACHE_DELAY = 5.seconds
+  CURRENT_ORDERS_CACHE_DELAY = 20.seconds
 
   attr_reader :client
 
