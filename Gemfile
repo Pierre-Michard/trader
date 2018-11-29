@@ -52,7 +52,7 @@ gem 'kraken_client', github: 'natonnelier/kraken_client'
 gem 'chartkick'
 gem 'groupdate'
 gem 'activejob-retriable', github: 'SimplyBuilt/activejob-retriable'
-gem 'coinbase-exchange'
+gem 'coinbase-exchange', github: 'Pierre-Michard/coinbase-exchange-ruby'
 gem 'rails-settings-cached'
 gem 'rails-settings-ui'
 

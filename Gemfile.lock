@@ -1,4 +1,13 @@
 GIT
+  remote: https://github.com/Pierre-Michard/coinbase-exchange-ruby.git
+  revision: 7c1e390e09aec77b0c1bbbcb057bf6c56b3c7c02
+  specs:
+    coinbase-exchange (0.3.0)
+      bigdecimal
+      em-http-request
+      faye-websocket
+
+GIT
   remote: https://github.com/Pierre-Michard/foreman.git
   revision: db4391099dc5b7a7008e32699e041ff9c1ca73dd
   specs:
@@ -133,10 +142,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    coinbase-exchange (0.2.0)
-      bigdecimal
-      em-http-request
-      faye-websocket
     concurrent-ruby (1.0.5)
     connection_pool (2.2.2)
     cookiejar (0.3.3)
@@ -426,7 +431,7 @@ DEPENDENCIES
   capistrano-rvm
   chartkick
   coffee-rails (~> 4.2)
-  coinbase-exchange
+  coinbase-exchange!
   font-awesome-rails
   foreman!
   groupdate
