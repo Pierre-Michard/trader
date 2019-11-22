@@ -44,19 +44,19 @@ class PaymiumService
   end
 
   def balance_eur
-    user['balance_eur']
+    user['balance_eur'].to_d
   end
 
   def locked_btc
-    user['locked_btc']
+    user['locked_btc'].to_d
   end
 
   def balance_btc
-    user['balance_btc']
+    user['balance_btc'].to_d
   end
 
   def locked_eur
-    user['locked_eur']
+    user['locked_eur'].to_d
   end
 
   def current_orders(force_fetch: false)
@@ -101,7 +101,7 @@ class PaymiumService
           created_at:Time.parse(ao['created_at']),
           created_at_int: ao['created_at_int'],
           uuid:ao['uuid'],
-          amount:ao['amount'],
+          amount:ao['amount'].to_d,
           direction: ao['name'] == 'btc_purchase'? :buy : :sell,
           currency: 'BTC',
           order: ao['order'],
@@ -155,8 +155,8 @@ class PaymiumService
           type: 'LimitOrder',
           currency: 'EUR',
           direction: direction,
-          amount: btc_amount,
-          price: price.round(2)
+          amount: btc_amount.to_s,
+          price: price.round(2).to_s
       })
       Rails.cache.write(:current_orders, current_orders.push(res.with_indifferent_access), expires_in: CURRENT_ORDERS_CACHE_DELAY)
     end
@@ -173,13 +173,13 @@ class PaymiumService
   def update_asks(asks)
     new_sdepth = sdepth
     asks.each do |ask|
-      existing = new_sdepth[:asks].detect{ |el| el[:price] == ask[:price] }
-      if ask[:amount] == 0
+      existing = new_sdepth[:asks].detect{ |el| el[:price].to_d == ask[:price].to_d }
+      if ask[:amount].to_d == 0
         new_sdepth[:asks].delete(existing) unless existing.nil?
       elsif existing.nil?
-        (new_sdepth[:asks] << ask).sort_by! { |a| a[:price]}
+        (new_sdepth[:asks] << ask).sort_by! { |a| a[:price].to_d}
       else
-        existing[:amount] = ask[:amount]
+        existing[:amount].to_d = ask[:amount].to_d
       end
     end
     update_sdepth(new_sdepth)
@@ -188,13 +188,13 @@ class PaymiumService
   def update_bids(bids)
     new_sdepth = sdepth
     bids.each do |bid|
-      existing = new_sdepth[:bids].detect{ |el| el[:price] == bid[:price] }
-      if bid[:amount] == 0
+      existing = new_sdepth[:bids].detect{ |el| el[:price].to_d == bid[:price].to_d }
+      if bid[:amount].to_d == 0
         new_sdepth[:bids].delete(existing) unless existing.nil?
       elsif existing.nil?
-        (new_sdepth[:bids] << bid).sort_by! { |a| -a[:price]}
+        (new_sdepth[:bids] << bid).sort_by! { |a| -(a[:price].to_d)}
       else
-        existing[:amount] = bid[:amount]
+        existing[:amount].to_d = bid[:amount].to_d
       end
     end
     update_sdepth(new_sdepth)
@@ -203,8 +203,8 @@ class PaymiumService
   def update_sdepth(new_sdepth)
     first_bid = bids.first
     first_ask = asks.first
-    if (first_bid[:mine] && new_sdepth[:bids].first[:amount] != first_bid[:amount]) ||
-        (first_ask[:mine] && new_sdepth[:asks].first[:amount] != first_ask[:amount])
+    if (first_bid[:mine] && new_sdepth[:bids].first[:amount].to_d != first_bid[:amount].to_d) ||
+        (first_ask[:mine] && new_sdepth[:asks].first[:amount].to_d != first_ask[:amount].to_d)
       unless api_threshold_exceeded? || Resque.size('trader_production_trader') > 2
         MonitorPriceJob.perform_later
       end
@@ -216,21 +216,21 @@ class PaymiumService
   def bids
     my_orders = current_buy_orders
     sdepth[:bids].each do |bid|
-      bid[:mine] = my_orders.any?{|o| o[:price] == bid[:price]}
+      bid[:mine] = my_orders.any?{|o| o[:price].to_d == bid[:price].to_d}
     end
   end
 
   def highest_stranger_bid(lower_than)
-    bids.detect{|b| (not b[:mine]) && b[:price]< lower_than}
+    bids.detect{|b| (not b[:mine]) && b[:price].to_d < lower_than}
   end
 
   def highest_stranger_ask(higher_than)
-    asks.detect{|b| (not b[:mine]) && b[:price]> higher_than}
+    asks.detect{|b| (not b[:mine]) && b[:price].to_d > higher_than}
   end
 
   def asks
     sdepth[:asks].each do |ask|
-      ask[:mine] = current_sell_orders.any?{|o| o[:price] == ask[:price]}
+      ask[:mine] = current_sell_orders.any?{|o| o[:price].to_d == ask[:price].to_d}
     end
   end
 
