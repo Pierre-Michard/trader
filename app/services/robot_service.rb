@@ -64,12 +64,12 @@ class RobotService
 
   def target_sell_price
     next_ask = PaymiumService.instance.highest_stranger_ask(counterpart_ask_price * (1 + sell_marge))
-    next_ask[:price] - 0.05
+    next_ask[:price].to_d - 0.05
   end
 
   def target_buy_price
     next_ask = PaymiumService.instance.highest_stranger_bid(counterpart_bids_price * (1 - buy_marge))
-    next_ask[:price] + 0.05
+    next_ask[:price].to_d + 0.05
   end
 
 
