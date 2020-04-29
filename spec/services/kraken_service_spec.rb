@@ -30,7 +30,7 @@ RSpec.describe KrakenService do
       Rails.cache.write(:kraken_balance, balance)
     end
     it 'updates cached balance' do
-      expect(subject.balance_eur).to eq(BigDecimal.new('100.1'))
+      expect(subject.balance_eur).to eq(BigDecimal('100.1'))
     end
   end
 

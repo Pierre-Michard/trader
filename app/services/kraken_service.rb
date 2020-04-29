@@ -72,11 +72,11 @@ class KrakenService < ExchangeService
   end
 
   def balance_eur
-    BigDecimal.new(balance[:ZEUR] || '0')
+    BigDecimal(balance[:ZEUR] || '0')
   end
 
   def balance_btc
-    BigDecimal.new(balance[:XXBT] || '0')
+    BigDecimal(balance[:XXBT] || '0')
   end
 
   def cancel_order(order)
