@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/Pierre-Michard/coinbase-exchange-ruby.git
-  revision: 3e2542b1cfda2ea39c04a80482388124af38cac9
+  revision: 54d908d01363f948b6284af323bfa0a68b4c6718
   specs:
     coinbase-exchange (0.3.0)
       bigdecimal
