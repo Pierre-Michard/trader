@@ -138,7 +138,7 @@ class PaymiumService
   def cancel_order(order)
     Rails.logger.info "cancel order #{order['uuid']}"
     with_retries(nb_retries: 1) do
-      client.delete("user/orders/#{order['uuid']}/cancel")
+      client.delete("user/orders/#{order['uuid']}")
     end
     Rails.cache.write(:current_orders, current_orders.select{|o| o['uuid'] != order['uuid']}, expires_in: CURRENT_ORDERS_CACHE_DELAY)
   end
