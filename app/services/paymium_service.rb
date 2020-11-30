@@ -179,7 +179,7 @@ class PaymiumService
       elsif existing.nil?
         (new_sdepth[:asks] << ask).sort_by! { |a| a[:price].to_d}
       else
-        existing[:amount].to_d = ask[:amount].to_d
+        existing[:amount] = ask[:amount].to_d
       end
     end
     update_sdepth(new_sdepth)
@@ -194,7 +194,7 @@ class PaymiumService
       elsif existing.nil?
         (new_sdepth[:bids] << bid).sort_by! { |a| -(a[:price].to_d)}
       else
-        existing[:amount].to_d = bid[:amount].to_d
+        existing[:amount] = bid[:amount].to_d
       end
     end
     update_sdepth(new_sdepth)
