@@ -150,7 +150,7 @@ class PaymiumService
   end
 
   def place_limit_order(direction:, btc_amount:, price:)
-    with_retries(nb_retries: 2) do
+    with_retries(nb_retries: 3) do
       res = post('user/orders', {
           type: 'LimitOrder',
           currency: 'EUR',
