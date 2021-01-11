@@ -51,9 +51,21 @@ class Trade < ApplicationRecord
     unless Rails.env.development? or self.counter_order_uuid.present?
       logger.info "place counter order #{btc_amount}"
       self.counter_order_uuid = Setting.counter_orders_service.place_order(
-          type: :market,
+          type: :limit,
           direction:  counter_order_direction,
-          btc_amount: btc_amount.abs)
+          btc_amount: btc_amount.abs,
+          price: counter_order_limit_price)
+    end
+  end
+
+  def counter_order_limit_price
+    case counter_order_direction
+    when :sell
+      paymium_price * 0.9
+    when :buy
+      paymium_price * 1.1
+    else
+      raise "unknown direction"
     end
   end
 
