@@ -61,9 +61,9 @@ class Trade < ApplicationRecord
   def counter_order_limit_price
     case counter_order_direction
     when :sell
-      paymium_price * 0.9
+      (paymium_price * 0.9).to_i
     when :buy
-      paymium_price * 1.1
+      (paymium_price * 1.1).to_i
     else
       raise "unknown direction"
     end
