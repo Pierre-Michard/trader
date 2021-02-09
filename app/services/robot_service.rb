@@ -1,5 +1,5 @@
 class RobotService
-  MAX_TRADE_AMOUNT= 0.8
+  MAX_TRADE_AMOUNT= 0.6
 
   def initialize
   end
@@ -107,7 +107,7 @@ class RobotService
     current_order = send("current_#{direction}_orders").last
     logger.info "current_order price: #{current_order.try(:[], 'price')}"
     unless current_order &&
-        current_order['price'] == target_price
+        current_order['price'].to_d == target_price
 
       if current_order
         logger.info "cancel #{direction} order"
