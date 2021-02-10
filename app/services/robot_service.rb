@@ -1,5 +1,5 @@
 class RobotService
-  MAX_TRADE_AMOUNT= 0.6
+  MAX_TRADE_AMOUNT= 1
 
   def initialize
   end
@@ -47,11 +47,11 @@ class RobotService
   end
 
   def sell_amount
-    @sell_amount ||= [sell_capacity, MAX_TRADE_AMOUNT].min * 0.9
+    @sell_amount ||= [sell_capacity, MAX_TRADE_AMOUNT].min * 0.5
   end
 
   def buy_amount
-    @buy_amount ||= [buy_capacity, MAX_TRADE_AMOUNT].min * 0.9
+    @buy_amount ||= [buy_capacity, MAX_TRADE_AMOUNT].min * 0.5
   end
 
   def counterpart_ask_price(volume: MAX_TRADE_AMOUNT)
