@@ -37,14 +37,7 @@
         %span= @stat.paymium_eur_balance.round(2)
         %span.fa.fa-euro
     %tr.warning
-      %td Kraken
-      %td btc
-      %td
-        %span= @stat.kraken_btc_balance.round(4)
-        %span.fa.fa-btc
-      %td= (@stat.kraken_btc_balance * @stat.price).round(2)
-    %tr.warning
-      %td Gdax
+      %td Coinbase
       %td btc
       %td
         %span= @stat.gdax_btc_balance.round(4)
@@ -58,14 +51,7 @@
         %span.fa.fa-btc
       %td= (@stat.paymium_btc_balance * @stat.price).round(2)
     %tr.info
-      %td Kraken
-      %td eur
-      %td= (@stat.kraken_eur_balance / @stat.price).round(4)
-      %td
-        %span= @stat.kraken_eur_balance.round(2)
-        %span.fa.fa-euro
-    %tr.info
-      %td Gdax
+      %td Coinbase
       %td eur
       %td= (@stat.gdax_eur_balance / @stat.price).round(4)
       %td
@@ -92,12 +78,7 @@
       %td= (@stat.total_virtual_btc).round(2)
       %td= (@stat.total_virtual_eur).round(2)
     %tr
-      %td Kraken - Paymium
-      %td total
-      %td= (@stat.total_kraken_virtual_btc - @stat.total_paymium_virtual_btc).round(2)
-      %td= (@stat.total_kraken_virtual_eur - @stat.total_paymium_virtual_eur).round(2)
-    %tr
-      %td Gdax - Paymium
+      %td Coinbase - Paymium
       %td total
       %td= (@stat.total_gdax_virtual_btc - @stat.total_paymium_virtual_btc).round(2)
       %td= (@stat.total_gdax_virtual_eur - @stat.total_paymium_virtual_eur).round(2)
@@ -106,6 +87,15 @@
       %td total
       %td= (@stat.total_btc - @stat.total_eur/@stat.price).round(2)
       %td= (@stat.total_btc*@stat.price - @stat.total_eur).round(2)
+    %tr
+      %td today
+      %td total
+      %td
+        %span=Trade.where('created_at > ?', Date.today.beginning_of_day).sum('ABS(btc_amount)').round(4)
+        %span.fa.fa-btc
+      %td
+        %span=Trade.where('created_at > ?', Date.today.beginning_of_day).sum('paymium_cost + counter_order_cost - counter_order_fee').round(2)
+        %span.fa.fa-euro
 %h2 Trade volume
 = column_chart Trade.where('created_at > ?', 1.month.ago.beginning_of_day).group_by_day(:created_at).sum('ABS(btc_amount)')
 %h2 Wins
