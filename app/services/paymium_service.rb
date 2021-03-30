@@ -94,20 +94,29 @@ class PaymiumService
     from_orders.
         map{|o| o['account_operations'].map{|ao| ao.merge({'order' => o})}}.
         flatten.
-        each_cons(2).
-        select{|prev, ao| ['btc_purchase','btc_sale'].include?(ao['name']) && ao['currency'] == 'BTC'}.
-        map do |prev, ao|
-      {
-          created_at:Time.parse(ao['created_at']),
-          created_at_int: ao['created_at_int'],
-          uuid:ao['uuid'],
-          amount:ao['amount'].to_d,
-          direction: ao['name'] == 'btc_purchase'? :buy : :sell,
-          currency: 'BTC',
-          order: ao['order'],
-          counterpart: prev
-      }
-    end
+        each_cons(3).
+        select{|_prev, ao, _fee| ['btc_purchase','btc_sale'].include?(ao['name']) && ao['currency'] == 'BTC'}.
+        map do |prev, ao, fee|
+          if %w[btc_purchase_fee btc_sale_fee].include?(fee['name'])
+            fee_amount = fee['amount'].to_d
+          elsif %w[btc_purchase_fee_incentive btc_sale_fee_incentive].include?(fee['name'])
+            fee_amount = - fee['amount'].to_d
+          else
+            fee_amount = 0
+          end
+          {
+              created_at:Time.parse(ao['created_at']),
+              created_at_int: ao['created_at_int'],
+              uuid:ao['uuid'],
+              amount:ao['amount'].to_d,
+              direction: ao['name'] == 'btc_purchase'? :buy : :sell,
+              currency: 'BTC',
+              order: ao['order'],
+              counterpart: prev,
+              fee_amount: fee_amount,
+              fee_currency: fee["currency"]
+          }
+        end
   end
 
   def trades
@@ -235,9 +244,7 @@ class PaymiumService
   end
 
   def get(*args)
-    res = Lock.acquire('paymium_client') do
-      client.get(*args)
-    end
+    res = client.get(*args)
 
     Rails.cache.write(:remaining_api_calls, client.remaining_limit, expires_in: 10.minutes)
 
