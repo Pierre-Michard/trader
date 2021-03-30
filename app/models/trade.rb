@@ -185,11 +185,19 @@ class Trade < ApplicationRecord
 
   def self.find_or_create_trade(trade)
     logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
+
+    if trade[:fee_currency] == "EUR"
+      paymium_fee_eur = trade[:fee]
+    else
+      paymium_fee_eur = trade[:fee] * trade[:order][:price].to_d
+    end
+
     find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
       t.btc_amount= trade[:amount]
       t.paymium_cost = trade[:counterpart][:amount]
       t.paymium_price = trade[:order][:price]
       t.paymium_order_uuid = trade[:order][:uuid]
+      t.paymium_fee = paymium_fee_eur
     end
   end
 
