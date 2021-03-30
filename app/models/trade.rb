@@ -188,9 +188,9 @@ class Trade < ApplicationRecord
     logger.info "trade #{trade[:uuid]}: #{trade[:amount]}"
 
     if trade[:fee_currency] == "EUR"
-      paymium_fee_eur = trade[:fee]
+      paymium_fee_eur = trade[:fee_amount]
     else
-      paymium_fee_eur = trade[:fee] * trade[:order][:price].to_d
+      paymium_fee_eur = trade[:fee_amount] * trade[:order][:price].to_d
     end
 
     find_or_create_by!(paymium_uuid: trade[:uuid]) do |t|
