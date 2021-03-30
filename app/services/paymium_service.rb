@@ -98,7 +98,7 @@ class PaymiumService
         select{|_prev, ao, _fee| ['btc_purchase','btc_sale'].include?(ao['name']) && ao['currency'] == 'BTC'}.
         map do |prev, ao, fee|
           if %w[btc_purchase_fee btc_sale_fee].include?(fee['name'])
-            fee_amount = fee['amount'].to_d
+            fee_amount = - fee['amount'].to_d
           elsif %w[btc_purchase_fee_incentive btc_sale_fee_incentive].include?(fee['name'])
             fee_amount = - fee['amount'].to_d
           else
