@@ -103,13 +103,14 @@ class Trade < ApplicationRecord
 
   def eur_margin
     if counter_order_cost.present? && paymium_cost.present? && counter_order_fee.present?
-      counter_order_cost + paymium_cost - counter_order_fee
+      counter_order_cost + paymium_cost - counter_order_fee - (paymium_fee || 0)
     end
   end
 
   def percent_margin
     if counter_order_price.present? && paymium_price.present?
-      100 * (counter_order_price - paymium_price).abs / paymium_price
+      gain = (paymium_direction == :buy)? counter_order_price - paymium_price : paymium_price - counter_order_price
+      100 * gain / paymium_price
     end
   end
 
