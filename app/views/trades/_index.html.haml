@@ -7,6 +7,8 @@
       %th BTC amount
       %th Counterpart price
       %th Paymium price
+      %th Paymium fee
+      %th Counterpart fee
       %th Eur margin
       %th percent margin
   %tbody
@@ -17,6 +19,8 @@
         %td= trade.btc_amount
         %td= trade.counter_order_price
         %td= trade.paymium_price
+        %td= trade.paymium_fee
+        %td= trade.counter_order_fee
         %td= trade.eur_margin.try(:round, 2)
         %td= trade.percent_margin.try(:round, 2)
 
