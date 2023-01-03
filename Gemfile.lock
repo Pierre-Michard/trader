@@ -217,7 +217,8 @@ GEM
       nokogiri (>= 1.6.0)
       ruby_parser (~> 3.5)
     http_parser.rb (0.6.0)
-    httparty (0.15.7)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
@@ -440,7 +441,7 @@ DEPENDENCIES
   foreman!
   groupdate
   haml-rails (~> 1.0)
-  httparty (~> 0.15.1)
+  httparty (~> 0.21.0)
   jbuilder (~> 2.5)
   jquery-rails
   kraken_client!

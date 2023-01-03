@@ -90,4 +90,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'aasm', '~> 4.12.3'
-gem 'httparty', '~> 0.15.1'
+gem 'httparty', '~> 0.21.0'
