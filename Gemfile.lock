@@ -255,7 +255,7 @@ GEM
     public_suffix (4.0.6)
     puma (3.12.6)
     raabro (1.4.0)
-    rack (2.2.3)
+    rack (2.2.6.2)
     rack-cache (1.12.1)
       rack (>= 0.4)
     rack-test (0.6.3)
